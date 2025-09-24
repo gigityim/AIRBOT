@@ -20,20 +20,27 @@
         .header {
             padding: 80px;
             text-align: center;
-            background: #3498db; /* 改为蓝色 */
+            background: url('picture/background.jpg') center/cover; /* 使用图片背景 */
             color: white;
-            /* 删除或修改渐变背景 */
-            background-image: linear-gradient(to right, #3498db, #2980b9);
+            /* 可以添加半透明遮罩 */
+            position: relative;
         }
- 
-        /* 标题字体加大 */
-        .header h1 {
-            font-size: 40px;
-            margin-bottom: 10px;
+
+        /* 添加半透明遮罩（可选） */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* 黑色半透明遮罩 */
+            z-index: 1;
         }
- 
-        .header p {
-            font-size: 18px;
+
+        .header h1, .header p {
+            position: relative;
+            z-index: 2;
         }
  
         /* 导航 */
@@ -161,7 +168,7 @@
         <a href="https://www.runoob.com/" target="_blank">菜鸟教程</a>
         <a href="https://www.bilibili.com/" target="_blank">Bilibili</a>
         <a href="https://www.limestart.cn/" target="_blank">青柠导航页</a>
-        <a href="https://qsqs.life/login?redirect=/system/dashboard">青山网络解决方案</a>
+        <a href="https://qsqs.life/register?code=CqKcdGIm/">青山网络解决方案</a>
         <a href="http://ehall.njit.edu.cn/new/index.html" class="right" target="_blank">南京工程学院信息门户</a>
     </div>
  
@@ -212,6 +219,7 @@
     </div>
 </body>
 </html>
+
 
 
 
