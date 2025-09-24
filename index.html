@@ -180,6 +180,26 @@
             margin: 30px 0 20px 0;
             color: #2c3e50;
         }
+
+        /* 地址部分样式 - 居中显示 */
+        .address-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            margin: 40px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .address-content {
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .address-content p {
+            margin: 15px 0;
+        }
  
         /* 实际图片样式 */
         .realimg {
@@ -238,6 +258,10 @@
             .navbar {
                 top: 180px; /* 移动设备调整位置 */
             }
+            .address-section {
+                margin: 20px;
+                padding: 30px 15px;
+            }
         }
  
         @media screen and (max-width: 400px) {
@@ -272,15 +296,15 @@
         <p>四旋翼机器人与轮式机器人</p>
     </div>
 
-    <!-- 新增顶部导航栏 -->
+    <!-- 修改后的顶部导航栏 -->
     <nav class="top-nav">
         <div class="top-nav-container">
-            <a href="#address">地址</a>
             <a href="#about">关于我们</a>
+            <a href="#awards">最新获奖</a>
             <a href="#join">如何加入</a>
             <a href="#materials">资料</a>
-            <a href="#awards">最新获奖</a>
             <a href="#projects">项目展示</a>
+            <a href="#address">地址</a>
         </div>
     </nav>
  
@@ -295,16 +319,6 @@
     <div class="row">
         <div class="side">
             <div class="card">
-                <!-- 地址部分 -->
-                <section id="address" class="section">
-                    <h2 class="section-title">地址</h2>
-                    <h5>实验室位置:</h5>
-                    <img src="picture/location.jpg" alt="实验室位置" class="realimg">
-                    <p><strong>地址：</strong>江苏省南京市江宁科学园弘景大道1号</p>
-                    <p><strong>具体位置：</strong>南京工程学院·创新创业学院·A104</p>
-                    <p><strong>联系电话：</strong>025-86118000</p>
-                </section>
-
                 <!-- 关于我们部分 -->
                 <section id="about" class="section">
                     <h2 class="section-title">关于我们</h2>
@@ -399,6 +413,18 @@
             </section>
         </div>
     </div>
+
+    <!-- 地址部分 - 放在网页最下面，居中显示 -->
+    <section id="address" class="address-section">
+        <h2 class="section-title" style="text-align: center; border-left: none; border-bottom: 3px solid #1abc9c; padding-left: 0; padding-bottom: 10px;">地址</h2>
+        <div class="address-content">
+            <p><strong>📍 地址：</strong>江苏省南京市江宁科学园弘景大道1号</p>
+            <p><strong>🏢 具体位置：</strong>南京工程学院·创新创业学院·A104</p>
+            <p><strong>📞 联系电话：</strong>025-86118000</p>
+            <p><strong>📧 邮箱：</strong>2819136493@qq.com</p>
+            <p><strong>🕒 开放时间：</strong>周一至周五 8:00-21:00</p>
+        </div>
+    </section>
  
     <div class="footer">
         <h2>© 南京工程学院·创新创业学院·A104</h2>
@@ -408,7 +434,7 @@
     <script>
         // 导航栏高亮效果
         document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.section');
+            const sections = document.querySelectorAll('.section, .address-section');
             const navLinks = document.querySelectorAll('.top-nav a');
             
             // 监听滚动事件
@@ -434,4 +460,3 @@
     </script>
 </body>
 </html>
-
