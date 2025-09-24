@@ -14,16 +14,17 @@
             font-family: Arial;
             margin: 0;
             line-height: 1.6;
+            scroll-behavior: smooth; /* 平滑滚动 */
         }
  
         /* 标题 */
         .header {
             padding: 80px;
             text-align: center;
-            background: url('background1.jpg') center/cover; /* 使用图片背景 */
+            background: url('background1.jpg') center/cover;
             color: white;
             position: relative;
-            min-height: 300px; /* 确保有足够高度显示logo */
+            min-height: 300px;
         }
 
         /* 添加半透明遮罩 */
@@ -34,7 +35,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* 黑色半透明遮罩 */
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1;
         }
 
@@ -43,13 +44,13 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 80px; /* 调整logo大小 */
+            width: 80px;
             height: 80px;
-            z-index: 3; /* 确保在遮罩之上 */
-            background: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+            z-index: 3;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             padding: 5px;
-            backdrop-filter: blur(5px); /* 毛玻璃效果 */
+            backdrop-filter: blur(5px);
             border: 2px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
         }
@@ -76,19 +77,56 @@
         .header h1 {
             font-size: 40px;
             margin-bottom: 10px;
-            margin-top: 20px; /* 为logo留出空间 */
+            margin-top: 20px;
+        }
+
+        /* 顶部导航栏 */
+        .top-nav {
+            background: #2c3e50;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .top-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .top-nav a:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+        }
+
+        .top-nav a.active {
+            background: #1abc9c;
+            color: white;
         }
  
-        /* 导航 */
+        /* 原有导航栏样式保持不变 */
         .navbar {
             overflow: hidden;
             background-color: #333;
             position: sticky;
-            top: 0;
+            top: 60px; /* 调整位置避免重叠 */
             z-index: 100;
         }
  
-        /* 导航栏样式 */
         .navbar a {
             float: left;
             display: block;
@@ -99,12 +137,10 @@
             transition: background-color 0.3s;
         }
  
-        /* 右侧链接*/
         .navbar a.right {
             float: right;
         }
  
-        /* 鼠标移动到链接的颜色 */
         .navbar a:hover {
             background-color: #ddd;
             color: black;
@@ -112,46 +148,39 @@
  
         /* 列容器 */
         .row {  
-            display: -ms-flexbox; /* IE10 */
             display: flex;
-            -ms-flex-wrap: wrap; /* IE10 */
             flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
         }
  
         /* 创建两个列 */
-        /* 边栏 */
         .side {
-            -ms-flex: 30%; /* IE10 */
             flex: 30%;
             background-color: #f9f9f9;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
  
-        /* 主要的内容区域 */
         .main {   
-            -ms-flex: 70%; /* IE10 */
             flex: 70%;
             background-color: white;
             padding: 20px;
         }
+
+        /* 锚点部分样式 */
+        .section {
+            scroll-margin-top: 120px; /* 为固定导航栏留出空间 */
+            padding: 20px 0;
+        }
+
+        .section-title {
+            border-left: 5px solid #1abc9c;
+            padding-left: 15px;
+            margin: 30px 0 20px 0;
+            color: #2c3e50;
+        }
  
-        /* 图片样式 */
-        .fakeimg {
-            background-color: #e9e9e9;
-            width: 100%;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            text-align: center;
-            color: #666;
-            transition: transform 0.3s;
-        }
-        
-        .fakeimg:hover {
-            transform: scale(1.01);
-        }
-        
         /* 实际图片样式 */
         .realimg {
             width: 100%;
@@ -197,6 +226,18 @@
                 font-size: 32px;
                 margin-top: 15px;
             }
+            .top-nav-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .top-nav a {
+                margin: 5px 0;
+                width: 90%;
+                text-align: center;
+            }
+            .navbar {
+                top: 180px; /* 移动设备调整位置 */
+            }
         }
  
         @media screen and (max-width: 400px) {
@@ -223,14 +264,25 @@
 </head>
 <body>
     <div class="header">
-        <!-- 添加logo -->
         <div class="header-logo">
-            <img src="picture/logo.png" alt="">
+            <img src="logo.png" alt="">
         </div>
         
         <h1>空中机器人实验室</h1>
         <p>四旋翼机器人与轮式机器人</p>
     </div>
+
+    <!-- 新增顶部导航栏 -->
+    <nav class="top-nav">
+        <div class="top-nav-container">
+            <a href="#address">地址</a>
+            <a href="#about">关于我们</a>
+            <a href="#join">如何加入</a>
+            <a href="#materials">资料</a>
+            <a href="#awards">最新获奖</a>
+            <a href="#projects">项目展示</a>
+        </div>
+    </nav>
  
     <div class="navbar">
         <a href="https://www.runoob.com/" target="_blank">菜鸟教程</a>
@@ -243,37 +295,108 @@
     <div class="row">
         <div class="side">
             <div class="card">
-                <h2>关于我们</h2>
-                <h5>项目照片:</h5>
-                <img src="picture/1.jpg" alt="项目照片" class="realimg">
-                <p>我们致力于提供无人智能化空中与陆地解决方案</p>
-                
-                <h3>更多内容</h3>
-                <p>参赛照片：</p>
-                <img src="picture/2.jpg" alt="项目1" class="realimg">
-                <img src="picture/3.jpg" alt="项目2" class="realimg">
-                <img src="picture/4.jpg" alt="项目3" class="realimg">
+                <!-- 地址部分 -->
+                <section id="address" class="section">
+                    <h2 class="section-title">地址</h2>
+                    <h5>实验室位置:</h5>
+                    <img src="picture/location.jpg" alt="实验室位置" class="realimg">
+                    <p><strong>地址：</strong>江苏省南京市江宁科学园弘景大道1号</p>
+                    <p><strong>具体位置：</strong>南京工程学院·创新创业学院·A104</p>
+                    <p><strong>联系电话：</strong>025-86118000</p>
+                </section>
+
+                <!-- 关于我们部分 -->
+                <section id="about" class="section">
+                    <h2 class="section-title">关于我们</h2>
+                    <h5>项目照片:</h5>
+                    <img src="picture/1.jpg" alt="项目照片" class="realimg">
+                    <p>我们致力于提供无人智能化空中与陆地解决方案。实验室成立于2020年，专注于四旋翼机器人和轮式机器人的研发与应用。</p>
+                    <p><strong>研究方向：</strong>无人机自主导航、机器视觉、智能控制算法、多机协同等。</p>
+                </section>
+
+                <!-- 如何加入部分 -->
+                <section id="join" class="section">
+                    <h2 class="section-title">如何加入</h2>
+                    <h5>加入流程:</h5>
+                    <img src="picture/join.jpg" alt="加入我们" class="realimg">
+                    <p><strong>申请条件：</strong></p>
+                    <ul>
+                        <li>对机器人技术有浓厚兴趣</li>
+                        <li>具备一定的编程基础（C++/Python）</li>
+                        <li>有团队合作精神</li>
+                        <li>每周能保证至少8小时实验室时间</li>
+                    </ul>
+                    <p><strong>申请流程：</strong></p>
+                    <ol>
+                        <li>提交个人简历至实验室邮箱</li>
+                        <li>参加技术面试</li>
+                        <li>完成入门项目考核</li>
+                        <li>正式加入实验室</li>
+                    </ol>
+                </section>
+
+                <!-- 资料部分 -->
+                <section id="materials" class="section">
+                    <h2 class="section-title">资料下载</h2>
+                    <h5>学习资源:</h5>
+                    <div class="card">
+                        <h4>入门教程</h4>
+                        <ul>
+                            <li><a href="#" target="_blank">ROS机器人操作系统入门</a></li>
+                            <li><a href="#" target="_blank">无人机基本原理</a></li>
+                            <li><a href="#" target="_blank">机器视觉基础</a></li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>开发工具</h4>
+                        <ul>
+                            <li><a href="#" target="_blank">Gazebo仿真环境配置</a></li>
+                            <li><a href="#" target="_blank">PX4飞控开发指南</a></li>
+                            <li><a href="#" target="_blank">OpenCV图像处理</a></li>
+                        </ul>
+                    </div>
+                </section>
             </div>
         </div>
         
         <div class="main">
-            <div class="card">
-                <h2>最新获奖</h2>
-                <h5>2025年8月</h5>
-                <img src="rcom1.jpg" alt="获奖证书" class="realimg">
-                <p>————————————————————————————————————————————————————————</p>
-                <p>————————————————————————————————————————————————————————</p>
-                <p>————————————————————————————————————————————————————————</p>
-            </div>
+            <!-- 最新获奖部分 -->
+            <section id="awards" class="section">
+                <div class="card">
+                    <h2 class="section-title">最新获奖</h2>
+                    <h5>2025年8月</h5>
+                    <img src="rcom1.jpg" alt="获奖证书" class="realimg">
+                    <p><strong>获奖项目：</strong>智能巡检无人机系统</p>
+                    <p><strong>获奖等级：</strong>全国大学生机器人大赛一等奖</p>
+                    <p><strong>项目描述：</strong>本项目开发了一套基于深度学习的智能巡检无人机系统，实现了自主导航、目标识别和实时监控功能。</p>
+                </div>
+            </section>
             
-            <div class="card">
-                <h2>另一赛道</h2>
-                <h5>2025年8月</h5>
-                <img src="rcom2.jpg" alt="比赛现场" class="realimg">
-                <p>——————————————————————————</p>
-                <p>——————————————————————————————————————————</p>
-                <p>————————————————————————————————————————————————————————————</p>
-            </div>
+            <!-- 项目展示部分 -->
+            <section id="projects" class="section">
+                <div class="card">
+                    <h2 class="section-title">另一赛道</h2>
+                    <h5>2025年8月</h5>
+                    <img src="rcom2.jpg" alt="比赛现场" class="realimg">
+                    <p><strong>参赛项目：</strong>轮式机器人协同作业平台</p>
+                    <p><strong>比赛成绩：</strong>RoboMaster机甲大师赛分区赛冠军</p>
+                    <p><strong>技术亮点：</strong>多机器人协同控制、实时通信系统、智能决策算法。</p>
+                </div>
+            </section>
+
+            <!-- 更多项目展示 -->
+            <section class="section">
+                <div class="card">
+                    <h2 class="section-title">更多项目</h2>
+                    <h5>实验室其他项目展示</h5>
+                    <img src="picture/2.jpg" alt="项目1" class="realimg">
+                    <p>————————————————————————————————————————————————————————</p>
+                    <img src="picture/3.jpg" alt="项目2" class="realimg">
+                    <p>————————————————————————————————————————————————————————</p>
+                    <img src="picture/4.jpg" alt="项目3" class="realimg">
+                    <p>————————————————————————————————————————————————————————</p>
+                </div>
+            </section>
         </div>
     </div>
  
@@ -281,6 +404,33 @@
         <h2>© 南京工程学院·创新创业学院·A104</h2>
         <p>联系邮箱: 2819136493@qq.com</p>
     </div>
+
+    <script>
+        // 导航栏高亮效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.top-nav a');
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', function() {
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
-
