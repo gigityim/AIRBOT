@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜鸟教程网页实例</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+ 
+        /* body 样式 */
+        body {
+            font-family: Arial;
+            margin: 0;
+            line-height: 1.6;
+        }
+ 
+        /* 标题 */
+        .header {
+            padding: 80px;
+            text-align: center;
+            background: #1abc9c;
+            color: white;
+            background-image: linear-gradient(to right, #1abc9c, #16a085);
+        }
+ 
+        /* 标题字体加大 */
+        .header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+ 
+        .header p {
+            font-size: 18px;
+        }
+ 
+        /* 导航 */
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+ 
+        /* 导航栏样式 */
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+ 
+        /* 右侧链接*/
+        .navbar a.right {
+            float: right;
+        }
+ 
+        /* 鼠标移动到链接的颜色 */
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+ 
+        /* 列容器 */
+        .row {  
+            display: -ms-flexbox; /* IE10 */
+            display: flex;
+            -ms-flex-wrap: wrap; /* IE10 */
+            flex-wrap: wrap;
+        }
+ 
+        /* 创建两个列 */
+        /* 边栏 */
+        .side {
+            -ms-flex: 30%; /* IE10 */
+            flex: 30%;
+            background-color: #f9f9f9;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+ 
+        /* 主要的内容区域 */
+        .main {   
+            -ms-flex: 70%; /* IE10 */
+            flex: 70%;
+            background-color: white;
+            padding: 20px;
+        }
+ 
+        /* 图片样式 */
+        .fakeimg {
+            background-color: #e9e9e9;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+            color: #666;
+            transition: transform 0.3s;
+        }
+        
+        .fakeimg:hover {
+            transform: scale(1.01);
+        }
+        
+        /* 实际图片样式 */
+        .realimg {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+ 
+        /* 底部 */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background: #2c3e50;
+            color: white;
+            margin-top: 20px;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* 响应式布局 - 在屏幕设备宽度尺寸小于 700px 时, 让两栏上下堆叠显示 */
+        @media screen and (max-width: 700px) {
+            .row {   
+                flex-direction: column;
+            }
+        }
+ 
+        /* 响应式布局 - 在屏幕设备宽度尺寸小于 400px 时, 让导航栏目上下堆叠显示 */
+        @media screen and (max-width: 400px) {
+            .navbar a {
+                float: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>菜鸟教程网页实例</h1>
+        <p>学习网页设计与开发的完美起点</p>
+    </div>
+ 
+    <div class="navbar">
+        <a href="https://www.runoob.com/html/html-tutorial.html" target="_blank">HTML教程</a>
+        <a href="https://www.runoob.com/css/css-tutorial.html" target="_blank">CSS教程</a>
+        <a href="https://www.runoob.com/js/js-tutorial.html" target="_blank">JavaScript教程</a>
+        <a href="https://www.runoob.com/" class="right" target="_blank">菜鸟教程首页</a>
+    </div>
+ 
+    <div class="row">
+        <div class="side">
+            <div class="card">
+                <h2>关于我</h2>
+                <h5>我的照片:</h5>
+                <!-- 替换为实际图片 -->
+                <img src="file:///C:/Users/Administrator/Pictures/Saved%20Pictures/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20250923204326_21_25.jpg" alt="我的照片" class="realimg">
+                <p>我是一名网页开发爱好者，喜欢学习前端技术，包括HTML、CSS和JavaScript。</p>
+                
+                <h3>更多内容</h3>
+                <p>以下是我学习过程中的一些项目截图：</p>
+                <!-- 替换为实际图片 -->
+                <img src="https://via.placeholder.com/400x100/3498db/ffffff?text=项目1" alt="项目1" class="realimg">
+                <img src="https://via.placeholder.com/400x100/9b59b6/ffffff?text=项目2" alt="项目2" class="realimg">
+                <img src="https://via.placeholder.com/400x100/e74c3c/ffffff?text=项目3" alt="项目3" class="realimg">
+            </div>
+        </div>
+        
+        <div class="main">
+            <div class="card">
+                <h2>HTML学习笔记</h2>
+                <h5>2023年10月15日</h5>
+                <!-- 替换为实际图片 -->
+                <img src="https://via.placeholder.com/800x300/2ecc71/ffffff?text=HTML示例" alt="HTML示例" class="realimg">
+                <p>HTML是网页的骨架，它定义了网页的结构和内容。</p>
+                <p>学习HTML是网页开发的第一步。通过标签和属性，我们可以创建标题、段落、链接、图片等各种网页元素。</p>
+                <p>菜鸟教程提供了非常详细的HTML教程，从基础到高级，循序渐进，非常适合初学者。</p>
+            </div>
+            
+            <div class="card">
+                <h2>CSS样式技巧</h2>
+                <h5>2023年10月20日</h5>
+                <!-- 替换为实际图片 -->
+                <img src="https://via.placeholder.com/800x300/e67e22/ffffff?text=CSS示例" alt="CSS示例" class="realimg">
+                <p>CSS用于控制网页的样式和布局，让网页更加美观。</p>
+                <p>通过CSS，我们可以设置颜色、字体、间距、布局等样式属性，还可以创建响应式设计，使网页在不同设备上都能良好显示。</p>
+                <p>菜鸟教程的CSS部分包含了大量实例和练习，帮助我快速掌握了各种样式技巧。</p>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="footer">
+        <h2>© 2023 菜鸟教程学习网页实例</h2>
+        <p>联系邮箱: example@example.com</p>
+    </div>
+</body>
+</html>
