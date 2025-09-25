@@ -7,13 +7,13 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-78KFBWYM2H');
     </script>
 
-    
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 替换这行viewport配置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -244,62 +244,108 @@
         }
         
         /* 响应式布局 */
-        @media screen and (max-width: 700px) {
-            .row {   
-                flex-direction: column;
-            }
-            .header {
-                padding: 60px 20px;
-                min-height: 250px;
-            }
-            .header-logo {
-                width: 60px;
-                height: 60px;
-                top: 15px;
-                left: 15px;
-            }
-            .header h1 {
-                font-size: 32px;
-                margin-top: 15px;
-            }
-            .top-nav-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .top-nav a {
-                margin: 5px 0;
-                width: 90%;
-                text-align: center;
-            }
-            .navbar {
-                top: 180px; /* 移动设备调整位置 */
-            }
-            .address-section {
-                margin: 20px;
-                padding: 30px 15px;
-            }
+    @media screen and (max-width: 700px) {
+        body {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            overflow-x: hidden;
         }
- 
-        @media screen and (max-width: 400px) {
-            .navbar a {
-                float: none;
-                width: 100%;
-            }
-            .header {
-                padding: 40px 15px;
-                min-height: 200px;
-            }
-            .header-logo {
-                width: 50px;
-                height: 50px;
-                top: 10px;
-                left: 10px;
-            }
-            .header h1 {
-                font-size: 28px;
-                margin-top: 10px;
-            }
+        
+        .row {   
+            flex-direction: column;
+            width: 100%;
+            margin: 0;
+            padding: 0 10px;
         }
+        
+        .side, .main {
+            flex: 100%;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            padding: 40px 15px;
+            min-height: 200px;
+        }
+        
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            top: 15px;
+            left: 15px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-top: 15px;
+        }
+        
+        .top-nav-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .top-nav a {
+            margin: 5px 0;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .navbar, .top-nav {
+            position: relative;
+            top: auto;
+        }
+        
+        .address-section {
+            margin: 20px 10px;
+            padding: 20px 15px;
+        }
+        
+        .section {
+            scroll-margin-top: 20px;
+            padding: 15px 0;
+        }
+    }
+
+    @media screen and (max-width: 400px) {
+        body {
+            font-size: 14px;
+        }
+        
+        .navbar a {
+            float: none;
+            width: 100%;
+            padding: 10px;
+        }
+        
+        .header {
+            padding: 30px 10px;
+            min-height: 150px;
+        }
+        
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        
+        .header p {
+            font-size: 12px;
+        }
+        
+        .card {
+            padding: 10px;
+            margin: 5px 0;
+        }
+    }
     </style>
 </head>
 <body>
@@ -476,6 +522,7 @@
     </script>
 </body>
 </html>
+
 
 
 
