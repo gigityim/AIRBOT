@@ -242,7 +242,164 @@
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        
+                /* 新增简洁用户菜单样式 */
+        .user-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+        .login-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 8px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 6px 15px;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .logout-btn:hover {
+            opacity: 1;
+        }
+
+        /* 受保护内容样式 */
+        .protected-content {
+            display: none;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-left: 4px solid #1abc9c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .protected-badge {
+            background: #1abc9c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        /* 登录模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1abc9c;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background: #1abc9c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #16a085;
+        }
+
+        .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
         /* 响应式布局 */
     @media screen and (max-width: 700px) {
         body {
@@ -353,11 +510,40 @@
         <div class="header-logo">
             <img src="picture/logo.png" alt="">
         </div>
+        <div class="user-menu">
+            <div id="guest-menu">
+                <button class="login-btn" onclick="openLoginModal()">内部登录</button>
+            </div>
+            <div id="user-menu" style="display: none;">
+                <div class="user-info">
+                    <span id="username-display">用户</span>
+                    <button class="logout-btn" onclick="logout()">退出</button>
+                </div>
+            </div>
+        </div>
         
         <h1>空中机器人实验室</h1>
         <p>四旋翼机器人与轮式机器人</p>
     </div>
-
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeLoginModal()">×</button>
+            <h2>内部成员登录</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">用户名</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密码</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="error-message" id="loginError">用户名或密码错误</div>
+                <button type="submit" class="submit-btn">登录</button>
+            </form>
+        </div>
+    </div>
     <!-- 修改后的顶部导航栏 -->
     <nav class="top-nav">
         <div class="top-nav-container">
@@ -411,9 +597,10 @@
                     </ol>
                 </section>
 
-                <!-- 资料部分 -->
-                <section id="materials" class="section">
-                    <h2 class="section-title">资料下载</h2>
+    <!-- 在资料部分添加受保护内容 -->
+    <section id="materials" class="section">
+        <h2 class="section-title">资料下载 <span class="protected-badge">内部资源</span></h2>
+        
                     <h5>学习资源:</h5>
                     <div class="card">
                         <h4>入门教程</h4>
@@ -430,15 +617,35 @@
                             <li><a href="#" target="_blank">PX4飞控开发指南</a></li>
                             <li><a href="#" target="_blank">OpenCV图像处理</a></li>
                         </ul>
+        <!-- 受保护内容 -->
+        <div class="protected-content" id="protected-materials">
+            <h4>🔒 内部专属资料</h4>
+            <div class="card">
+                <h4>实验室内部文档</h4>
+                <ul>
+                    <li><a href="#" target="_blank">项目开发规范</a></li>
+                    <li><a href="#" target="_blank">硬件采购清单</a></li>
+                    <li><a href="#" target="_blank">实验安全手册</a></li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>技术资源</h4>
+                <ul>
+                    <li><a href="#" target="_blank">源码仓库地址</a></li>
+                    <li><a href="#" target="_blank">仿真环境配置</a></li>
+                    <li><a href="#" target="_blank">算法实现文档</a></li>
+                </ul>
+            </div>
                     </div>
                 </section>
             </div>
         </div>
         
         <div class="main">
-            <!-- 最新获奖部分 -->
-            <section id="awards" class="section">
-                <div class="card">
+    <!-- 在项目展示部分也可以添加受保护内容 -->
+    <section id="projects" class="section">
+        <div class="card">
+            <h2 class="section-title">内部项目 <span class="protected-badge">仅成员可见</span></h2>
                     <h2 class="section-title">最新获奖</h2>
                     <h5>2025年8月</h5>
                     <img src="rcom1.jpg" alt="获奖证书" class="realimg">
@@ -458,6 +665,14 @@
                     <p><strong>比赛成绩：</strong>全国总决赛一等奖</p>
                     <p><strong>技术亮点：</strong>机器人控制，多机通信、实时通信系统、智能决策算法。</p>
                 </div>
+                            <!-- 受保护项目 -->
+            <div class="protected-content" id="protected-projects">
+                <h5>2025年8月 - 内部项目</h5>
+                <img src="picture/2.jpg" alt="内部项目" class="realimg">
+                <p><strong>内部项目：</strong>新一代导航算法研发</p>
+                <p><strong>状态：</strong>进行中</p>
+                <p><strong>参与人员：</strong>内部成员专用</p>
+            </div>
             </section>
 
             <!-- 更多项目展示 -->
@@ -519,9 +734,167 @@
                 });
             });
         });
+  // 内部用户账号配置（15个成员）
+        const internalUsers = {
+            // 管理员账号
+            "admin": { password: "admin2024", role: "admin", name: "管理员" },
+            "张老师": { password: "teacher123", role: "teacher", name: "张老师" },
+            "李老师": { password: "teacher456", role: "teacher", name: "李老师" },
+            
+            // 学生成员账号
+            "张三": { password: "student001", role: "student", name: "张三" },
+            "李四": { password: "student002", role: "student", name: "李四" },
+            "王五": { password: "student003", role: "student", name: "王五" },
+            "赵六": { password: "student004", role: "student", name: "赵六" },
+            "钱七": { password: "student005", role: "student", name: "钱七" },
+            "孙八": { password: "student006", role: "student", name: "孙八" },
+            "周九": { password: "student007", role: "student", name: "周九" },
+            "吴十": { password: "student008", role: "student", name: "吴十" },
+            "郑十一": { password: "student009", role: "student", name: "郑十一" },
+            "王十二": { password: "student010", role: "student", name: "王十二" },
+            "李十三": { password: "student011", role: "student", name: "李十三" },
+            "张十四": { password: "student012", role: "student", name: "张十四" },
+            "刘十五": { password: "student013", role: "student", name: "刘十五" }
+        };
+
+        // 用户认证管理
+        class AuthManager {
+            constructor() {
+                this.currentUser = null;
+                this.init();
+            }
+
+            init() {
+                this.loadUserFromStorage();
+                this.updateUI();
+                this.bindEvents();
+            }
+
+            loadUserFromStorage() {
+                const userData = localStorage.getItem('lab_currentUser');
+                if (userData) {
+                    this.currentUser = JSON.parse(userData);
+                    // 验证用户是否仍然有效（可选）
+                    if (!internalUsers[this.currentUser.username]) {
+                        this.logout();
+                    }
+                }
+            }
+
+            saveUserToStorage() {
+                if (this.currentUser) {
+                    localStorage.setItem('lab_currentUser', JSON.stringify(this.currentUser));
+                } else {
+                    localStorage.removeItem('lab_currentUser');
+                }
+            }
+
+            login(username, password) {
+                if (internalUsers[username] && internalUsers[username].password === password) {
+                    this.currentUser = {
+                        username: username,
+                        name: internalUsers[username].name,
+                        role: internalUsers[username].role,
+                        loginTime: new Date().toISOString()
+                    };
+                    this.saveUserToStorage();
+                    this.updateUI();
+                    closeLoginModal();
+                    return true;
+                }
+                return false;
+            }
+
+            logout() {
+                this.currentUser = null;
+                this.saveUserToStorage();
+                this.updateUI();
+            }
+
+            isLoggedIn() {
+                return this.currentUser !== null;
+            }
+
+            updateUI() {
+                const guestMenu = document.getElementById('guest-menu');
+                const userMenu = document.getElementById('user-menu');
+                const protectedElements = document.querySelectorAll('.protected-content');
+
+                if (this.isLoggedIn()) {
+                    guestMenu.style.display = 'none';
+                    userMenu.style.display = 'block';
+                    protectedElements.forEach(el => {
+                        el.style.display = 'block';
+                    });
+                    document.getElementById('username-display').textContent = this.currentUser.name;
+                } else {
+                    guestMenu.style.display = 'block';
+                    userMenu.style.display = 'none';
+                    protectedElements.forEach(el => {
+                        el.style.display = 'none';
+                    });
+                }
+            }
+
+            bindEvents() {
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+            }
+
+            handleLogin() {
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                const errorElement = document.getElementById('loginError');
+
+                if (this.login(username, password)) {
+                    errorElement.style.display = 'none';
+                } else {
+                    errorElement.style.display = 'block';
+                }
+            }
+        }
+
+        // 初始化认证管理器
+        const authManager = new AuthManager();
+
+        // 模态框控制函数
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                authManager.logout();
+            }
+        }
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('loginModal');
+            if (e.target === modal) {
+                closeLoginModal();
+            }
+        });
+
+        // 回车键登录
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('loginModal').style.display === 'flex') {
+                authManager.handleLogin();
+            }
+        });
     </script>
 </body>
 </html>
+
 
 
 
