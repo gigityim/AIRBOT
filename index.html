@@ -1,592 +1,88 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-78KFBWYM2H"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-78KFBWYM2H');
-    </script>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
 
-    <meta charset="UTF-8">
-    <!-- 替换这行viewport配置 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    
     <title>空中机器人实验室</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
- 
-        /* body 样式 */
-        body {
-            font-family: Arial;
-            margin: 0;
-            line-height: 1.6;
-            scroll-behavior: smooth; /* 平滑滚动 */
-        }
- 
-        /* 标题 */
-        .header {
-            padding: 80px;
-            text-align: center;
-            background: url('background1.jpg') center/cover;
-            color: white;
-            position: relative;
-            min-height: 300px;
-        }
-
-        /* 添加半透明遮罩 */
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-
-        /* Logo样式 */
-        .header-logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 80px;
-            height: 80px;
-            z-index: 3;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 5px;
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .header-logo:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .header-logo img {
-            width: 100%;
-            height: 100%;
-            border-radius: 5px;
-            object-fit: cover;
-        }
-
-        .header h1, .header p {
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .header h1 {
-            font-size: 40px;
-            margin-bottom: 10px;
-            margin-top: 20px;
-        }
-
-        /* 顶部导航栏 */
-        .top-nav {
-            background: #2c3e50;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 101;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .top-nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .top-nav a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .top-nav a:hover {
-            background: #34495e;
-            transform: translateY(-2px);
-        }
-
-        .top-nav a.active {
-            background: #1abc9c;
-            color: white;
-        }
- 
-        /* 原有导航栏样式保持不变 */
-        .navbar {
-            overflow: hidden;
-            background-color: #333;
-            position: sticky;
-            top: 60px; /* 调整位置避免重叠 */
-            z-index: 100;
-        }
- 
-        .navbar a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
- 
-        .navbar a.right {
-            float: right;
-        }
- 
-        .navbar a:hover {
-            background-color: #ddd;
-            color: black;
-        }
- 
-        /* 列容器 */
-        .row {  
-            display: flex;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
- 
-        /* 创建两个列 */
-        .side {
-            flex: 30%;
-            background-color: #f9f9f9;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
- 
-        .main {   
-            flex: 70%;
-            background-color: white;
-            padding: 20px;
-        }
-
-        /* 锚点部分样式 */
-        .section {
-            scroll-margin-top: 120px; /* 为固定导航栏留出空间 */
-            padding: 20px 0;
-        }
-
-        .section-title {
-            border-left: 5px solid #1abc9c;
-            padding-left: 15px;
-            margin: 30px 0 20px 0;
-            color: #2c3e50;
-        }
-
-        /* 地址部分样式 - 居中显示 */
-        .address-section {
-            text-align: center;
-            padding: 40px 20px;
-            background: #f8f9fa;
-            margin: 40px auto;
-            max-width: 800px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .address-content {
-            font-size: 18px;
-            line-height: 1.8;
-        }
-
-        .address-content p {
-            margin: 15px 0;
-        }
- 
-        /* 实际图片样式 */
-        .realimg {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
- 
-        /* 底部 */
-        .footer {
-            padding: 20px;
-            text-align: center;
-            background: #2c3e50;
-            color: white;
-            margin-top: 20px;
-        }
-        
-        /* 卡片样式 */
-        .card {
-            background-color: white;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-                /* 新增简洁用户菜单样式 */
-        .user-menu {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 3;
-        }
-
-        .login-btn {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 8px 20px;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .login-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .user-info {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 6px 15px;
-            color: white;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logout-btn {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .logout-btn:hover {
-            opacity: 1;
-        }
-
-        /* 受保护内容样式 */
-        .protected-content {
-            display: none;
-            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-            border-left: 4px solid #1abc9c;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-            position: relative;
-        }
-
-        .protected-badge {
-            background: #1abc9c;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-
-        /* 登录模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .modal h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #1abc9c;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 10px;
-            background: #1abc9c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            background: #16a085;
-        }
-
-        .close-btn {
-            float: right;
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        /* 响应式布局 */
-    @media screen and (max-width: 700px) {
-        body {
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-            overflow-x: hidden;
-        }
-        
-        .row {   
-            flex-direction: column;
-            width: 100%;
-            margin: 0;
-            padding: 0 10px;
-        }
-        
-        .side, .main {
-            flex: 100%;
-            padding: 15px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        .header {
-            padding: 40px 15px;
-            min-height: 200px;
-        }
-        
-        .header-logo {
-            width: 60px;
-            height: 60px;
-            top: 15px;
-            left: 15px;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            margin-top: 15px;
-        }
-        
-        .top-nav-container {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .top-nav a {
-            margin: 5px 0;
-            width: 90%;
-            text-align: center;
-        }
-        
-        .navbar, .top-nav {
-            position: relative;
-            top: auto;
-        }
-        
-        .address-section {
-            margin: 20px 10px;
-            padding: 20px 15px;
-        }
-        
-        .section {
-            scroll-margin-top: 20px;
-            padding: 15px 0;
-        }
-    }
-
-    @media screen and (max-width: 400px) {
-        body {
-            font-size: 14px;
-        }
-        
-        .navbar a {
-            float: none;
-            width: 100%;
-            padding: 10px;
-        }
-        
-        .header {
-            padding: 30px 10px;
-            min-height: 150px;
-        }
-        
-        .header-logo {
-            width: 50px;
-            height: 50px;
-            top: 10px;
-            left: 10px;
-        }
-        
-        .header h1 {
-            font-size: 20px;
-            margin-top: 10px;
-        }
-        
-        .header p {
-            font-size: 12px;
-        }
-        
-        .card {
-            padding: 10px;
-            margin: 5px 0;
-        }
-    }
-    </style>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="header">
+    <!-- 顶部大图 + 登录区 -->
+    <header class="header">
         <div class="header-logo">
-            <img src="picture/logo.png" alt="">
+            <img src="picture/logo.png" alt="实验室 Logo" />
         </div>
-        <div class="user-menu">
-            <div id="guest-menu">
-                <button class="login-btn" onclick="openLoginModal()">内部登录</button>
+
+        <div class="user-menu" data-role="user-menu-wrapper">
+            <!-- 未登录时显示 -->
+            <div data-role="guest-menu">
+                <button class="login-btn" data-role="open-login">内部登录</button>
             </div>
-            <div id="user-menu" style="display: none;">
+            <!-- 已登录时显示 -->
+            <div data-role="user-menu" style="display: none;">
                 <div class="user-info">
-                    <span id="username-display">用户</span>
-                    <button class="logout-btn" onclick="logout()">退出</button>
+                    <span data-role="username-display">用户</span>
+                    <button class="logout-btn" data-role="logout">退出</button>
                 </div>
             </div>
         </div>
-        
+
         <h1>空中机器人实验室</h1>
         <p>四旋翼机器人与轮式机器人</p>
-    </div>
-    <!-- 登录模态框 -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeLoginModal()">×</button>
-            <h2>内部成员登录</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginUsername">用户名</label>
-                    <input type="text" id="loginUsername" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">密码</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <div class="error-message" id="loginError">用户名或密码错误</div>
-                <button type="submit" class="submit-btn">登录</button>
-            </form>
-        </div>
-    </div>
-    <!-- 修改后的顶部导航栏 -->
+    </header>
+
+    <!-- 顶部导航栏（单一导航） -->
     <nav class="top-nav">
         <div class="top-nav-container">
             <a href="#about">关于我们</a>
             <a href="#awards">最新获奖</a>
             <a href="#join">如何加入</a>
-            <a href="#materials">资料</a>
+            <a href="#materials">资料下载</a>
             <a href="#projects">项目展示</a>
             <a href="#address">地址</a>
         </div>
     </nav>
- 
-    <div class="navbar">
-        <a href="https://www.runoob.com/" target="_blank" rel="noopener noreferrer nofollow">菜鸟教程</a>
-        <a href="https://www.bilibili.com/" target="_blank">Bilibili</a>
-        <a href="https://www.limestart.cn/" target="_blank">青柠导航页</a>
-        <a href="https://qsqs.life/register?code=CqKcdGIm/" rel="noopener noreferrer nofollow">青山网络解决方案</a>
-        <a href="http://ehall.njit.edu.cn/new/index.html" class="right" target="_blank" rel="noopener noreferrer nofollow">南京工程学院信息门户</a>
-    </div>
- 
-    <div class="row">
-        <div class="side">
-            <div class="card">
-                <!-- 关于我们部分 -->
+
+    <!-- 页面主体 -->
+    <main class="page">
+        <div class="row">
+            <!-- 左侧：关于 / 加入 / 常用链接 -->
+            <aside class="side">
                 <section id="about" class="section">
                     <h2 class="section-title">关于我们</h2>
-                    <h5>项目照片:</h5>
-                    <img src="picture/1.jpg" alt="项目照片" class="realimg">
-                    <p>我们致力于提供无人智能化空中与陆地解决方案。实验室成立于2014年，专注于四旋翼机器人和轮式机器人的研发与应用。</p>
-                    <p><strong>研究方向：</strong>无人机自主导航、机器视觉、智能控制算法、多机协同等。</p>
+                    <h5>项目照片：</h5>
+                    <img src="picture/1.jpg" alt="项目照片" class="realimg" />
+                    <p>
+                        我们致力于提供无人智能化空中与陆地解决方案。实验室成立于 2014 年，
+                        专注于四旋翼机器人和轮式机器人的研发与应用。
+                    </p>
+                    <p>
+                        <strong>研究方向：</strong>无人机自主导航、机器视觉、智能控制算法、多机协同等。
+                    </p>
                 </section>
 
-                <!-- 如何加入部分 -->
                 <section id="join" class="section">
                     <h2 class="section-title">如何加入</h2>
-                    <h3>2025届大一招新群:</h3>
-                    <img src="picture/QR.jpg" alt="2025届大一招新群" class="realimg" style="width: 60%; max-width: 400px; margin: 0 auto 15px auto; display: block;">
+                    <h3>2025 届大一招新群：</h3>
+                    <img
+                        src="picture/QR.jpg"
+                        alt="2025届大一招新群"
+                        class="realimg qr-img"
+                    />
                     <p><strong>申请条件：</strong></p>
                     <ul>
                         <li>对机器人技术有浓厚兴趣</li>
-                        <li>具备一定的编程基础（C++/Python）</li>
+                        <li>具备一定的编程基础（C++ / Python）</li>
                         <li>有团队合作精神</li>
-                        <li>每周能保证至少8小时实验室时间</li>
+                        <li>每周能保证至少 8 小时实验室时间</li>
                     </ul>
                     <p><strong>申请流程：</strong></p>
                     <ol>
@@ -597,317 +93,208 @@
                     </ol>
                 </section>
 
-    <!-- 在资料部分添加受保护内容 -->
-    <section id="materials" class="section">
-        <h2 class="section-title">资料下载 <span class="protected-badge">内部资源</span></h2>
-                <!-- 受保护内容 -->
-        <div class="protected-content" id="protected-materials">
-            <h4>🔒 内部专属资料</h4>
-            <div class="card">
-                <h4>实验室内部文档</h4>
-                <ul>
-                    <li><a href="#" target="_blank">项目开发规范</a></li>
-                    <li><a href="#" target="_blank">硬件采购清单</a></li>
-                    <li><a href="#" target="_blank">实验安全手册</a></li>
-                </ul>
-            </div>
-            <div class="card">
-                <h4>技术资源</h4>
-                <ul>
-                    <li><a href="#" target="_blank">源码仓库地址</a></li>
-                    <li><a href="#" target="_blank">仿真环境配置</a></li>
-                    <li><a href="#" target="_blank">算法实现文档</a></li>
-                </ul>
-            </div>
-                    </div>
-                    <h2 class="section-title">公开资源</h2>
-                    <h5>学习资源:</h5>
+                <section class="section">
+                    <h2 class="section-title">常用链接</h2>
+                    <ul class="link-list">
+                        <li>
+                            <a href="https://www.runoob.com/" target="_blank" rel="noopener noreferrer nofollow">
+                                菜鸟教程
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.bilibili.com/" target="_blank" rel="noopener noreferrer">
+                                Bilibili
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.limestart.cn/" target="_blank" rel="noopener noreferrer">
+                                青柠导航页
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://qsqs.life/register?code=CqKcdGIm/" target="_blank" rel="noopener noreferrer nofollow">
+                                青山网络解决方案
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://ehall.njit.edu.cn/new/index.html" target="_blank" rel="noopener noreferrer nofollow">
+                                南京工程学院信息门户
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+            </aside>
+
+            <!-- 右侧：获奖 / 资料 / 项目 / 地址 -->
+            <section class="main">
+                <!-- 最新获奖独立 section，对应 #awards -->
+                <section id="awards" class="section">
                     <div class="card">
-                        <h4>入门教程</h4>
+                        <h2 class="section-title">信息公开 · 最新获奖</h2>
+
+                        <article class="award-item">
+                            <h5>2025 年 8 月</h5>
+                            <img src="rcom1.jpg" alt="获奖证书" class="realimg" />
+                            <p><strong>获奖项目：</strong>智能巡检无人机系统</p>
+                            <p><strong>获奖等级：</strong>全国总决赛一等奖</p>
+                            <p>
+                                <strong>项目描述：</strong>
+                                本项目开发了一套基于深度学习的智能巡检无人机系统，
+                                实现了自主导航、目标识别和实时监控功能。
+                            </p>
+                        </article>
+
+                        <article class="award-item">
+                            <h5>2025 年 8 月</h5>
+                            <img src="rcom2.jpg" alt="比赛现场" class="realimg" />
+                            <p><strong>参赛项目：</strong>智能侦察机器人系统</p>
+                            <p><strong>比赛成绩：</strong>全国总决赛一等奖</p>
+                            <p>
+                                <strong>技术亮点：</strong>
+                                机器人控制、多机通信、实时通信系统、智能决策算法等。
+                            </p>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- 资料下载 -->
+                <section id="materials" class="section">
+                    <h2 class="section-title">
+                        资料下载
+                        <span class="protected-badge">内部资源</span>
+                    </h2>
+
+                    <!-- 受保护：登录后可见 -->
+                    <div class="protected-content" data-protected-block="materials">
+                        <div class="card">
+                            <h3>🔒 实验室内部文档</h3>
+                            <ul>
+                                <li><a href="#">项目开发规范</a></li>
+                                <li><a href="#">硬件采购清单</a></li>
+                                <li><a href="#">实验安全手册</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h3>🔒 技术资源</h3>
+                            <ul>
+                                <li><a href="#">源码仓库地址</a></li>
+                                <li><a href="#">仿真环境配置</a></li>
+                                <li><a href="#">算法实现文档</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 公开资源（无需登录） -->
+                    <h3 class="section-subtitle">公开资源</h3>
+                    <div class="card">
+                        <h4>学习资源</h4>
                         <ul>
-                            <li><a href="https://fishros.com/" target="_blank" rel="noopener noreferrer nofollow">ROS机器人操作系统入门</a></li>
-                            <li><a href="https://blog.csdn.net/weixin_44917390/article/details/106365606" target="_blank">无人机基本原理</a></li>
-                            <li><a href="#" target="_blank">机器视觉基础</a></li>
+                            <li>
+                                <a href="https://fishros.com/" target="_blank" rel="noopener noreferrer">
+                                    ROS 机器人操作系统入门
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://blog.csdn.net/" target="_blank" rel="noopener noreferrer">
+                                    无人机基本原理（CSDN 教程）
+                                </a>
+                            </li>
+                            <li><a href="#">机器视觉基础</a></li>
                         </ul>
                     </div>
                     <div class="card">
                         <h4>开发工具</h4>
                         <ul>
-                            <li><a href="#" target="_blank">Gazebo仿真环境配置</a></li>
-                            <li><a href="#" target="_blank">PX4飞控开发指南</a></li>
-                            <li><a href="#" target="_blank">OpenCV图像处理</a></li>
+                            <li><a href="#">Gazebo 仿真环境配置</a></li>
+                            <li><a href="#">PX4 飞控开发指南</a></li>
+                            <li><a href="#">OpenCV 环境配置说明</a></li>
                         </ul>
+                    </div>
                 </section>
-            </div>
+
+                <!-- 项目展示（只有一个 #projects） -->
+                <section id="projects" class="section">
+                    <div class="card protected-content" data-protected-block="projects">
+                        <h2 class="section-title">
+                            内部项目
+                            <span class="protected-badge">仅成员可见</span>
+                        </h2>
+                        <h5>2025 年 8 月 · 内部项目</h5>
+                        <img src="picture/2.jpg" alt="内部项目" class="realimg" />
+                        <p><strong>项目名称：</strong>新一代导航算法研发</p>
+                        <p><strong>状态：</strong>进行中</p>
+                        <p><strong>参与人员：</strong>内部成员专用</p>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="section-title">更多项目</h2>
+                        <h5>实验室其他项目展示</h5>
+                        <img src="picture/2.jpg" alt="项目 1" class="realimg" />
+                        <p>———————————————————————</p>
+                        <img src="picture/3.jpg" alt="项目 2" class="realimg" />
+                        <p>———————————————————————</p>
+                        <img src="picture/4.jpg" alt="项目 3" class="realimg" />
+                    </div>
+                </section>
+
+                <!-- 地址 / 联系方式 -->
+                <section id="address" class="address-section">
+                    <h2 class="section-title">地址</h2>
+                    <div class="address-content">
+                        <p><strong>📍 地址：</strong>江苏省南京市江宁科学园弘景大道 1 号</p>
+                        <p><strong>🏢 具体位置：</strong>南京工程学院 · 创新创业学院 · A104</p>
+                        <p><strong>📞 联系电话：</strong>025-86118000</p>
+                        <p><strong>📧 邮箱：</strong>2819136493@qq.com</p>
+                        <p><strong>🕒 开放时间：</strong>周一至周五 8:00–21:00</p>
+                    </div>
+                </section>
+            </section>
         </div>
-        
-        <div class="main">
-    <!-- 在项目展示部分也可以添加受保护内容 -->
-    <section id="projects" class="section">
-        <div class="card">
-            <h2 class="section-title">内部项目 <span class="protected-badge">仅成员可见</span></h2>
-                                        <!-- 受保护项目 -->
-            <div class="protected-content" id="protected-projects">
-                <h5>2025年8月 - 内部项目</h5>
-                <img src="picture/2.jpg" alt="内部项目" class="realimg">
-                <p><strong>内部项目：</strong>新一代导航算法研发</p>
-                <p><strong>状态：</strong>进行中</p>
-                <p><strong>参与人员：</strong>内部成员专用</p>
-            </div>
-                    <h2 class="section-title">信息公开·最新获奖</h2>
-                    <h5>2025年8月</h5>
-                    <img src="rcom1.jpg" alt="获奖证书" class="realimg">
-                    <p><strong>获奖项目：</strong>智能巡检无人机系统</p>
-                    <p><strong>获奖等级：</strong>全国总决赛一等奖</p>
-                    <p><strong>项目描述：</strong>本项目开发了一套基于深度学习的智能巡检无人机系统，实现了自主导航、目标识别和实时监控功能。</p>
-                </div>
-            </section>
-            
-            <!-- 项目展示部分 -->
-            <section id="projects" class="section">
-                <div class="card">
-                    <h2 class="section-title">另一赛道</h2>
-                    <h5>2025年8月</h5>
-                    <img src="rcom2.jpg" alt="比赛现场" class="realimg">
-                    <p><strong>参赛项目：</strong>智能侦察</p>
-                    <p><strong>比赛成绩：</strong>全国总决赛一等奖</p>
-                    <p><strong>技术亮点：</strong>机器人控制，多机通信、实时通信系统、智能决策算法。</p>
-                </div>
+    </main>
 
-            </section>
+    <!-- 页脚 -->
+    <footer class="footer">
+        <h2>© 南京工程学院 · 创新创业学院 · A104</h2>
+        <p>联系邮箱：2819136493@qq.com</p>
+    </footer>
 
-            <!-- 更多项目展示 -->
-            <section class="section">
-                <div class="card">
-                    <h2 class="section-title">更多项目</h2>
-                    <h5>实验室其他项目展示</h5>
-                    <img src="picture/2.jpg" alt="项目1" class="realimg">
-                    <p>———————————————————————</p>
-                    <img src="picture/3.jpg" alt="项目2" class="realimg">
-                    <p>———————————————————————</p>
-                    <img src="picture/4.jpg" alt="项目3" class="realimg">
-                    <p>———————————————————————</p>
+    <!-- 登录模态框 -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" data-role="close-login">&times;</button>
+            <h2>内部登录</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">用户名</label>
+                    <input
+                        type="text"
+                        id="loginUsername"
+                        name="username"
+                        placeholder="例如：admin"
+                        autocomplete="username"
+                        required
+                    />
                 </div>
-            </section>
+                <div class="form-group">
+                    <label for="loginPassword">密码</label>
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        name="password"
+                        placeholder="演示环境密码：见 script.js"
+                        autocomplete="current-password"
+                        required
+                    />
+                </div>
+                <div class="error-message" id="loginError" hidden>
+                    用户名或密码错误
+                </div>
+                <button type="submit" class="submit-btn">登录</button>
+            </form>
         </div>
     </div>
 
-    <!-- 地址部分 - 放在网页最下面，居中显示 -->
-    <section id="address" class="address-section">
-        <h2 class="section-title" style="text-align: center; border-left: none; border-bottom: 3px solid #1abc9c; padding-left: 0; padding-bottom: 10px;">地址</h2>
-        <div class="address-content">
-            <p><strong>📍 地址：</strong>江苏省南京市江宁科学园弘景大道1号</p>
-            <p><strong>🏢 具体位置：</strong>南京工程学院·创新创业学院·A104</p>
-            <p><strong>📞 联系电话：</strong>025-86118000</p>
-            <p><strong>📧 邮箱：</strong>2819136493@qq.com</p>
-            <p><strong>🕒 开放时间：</strong>周一至周五 8:00-21:00</p>
-        </div>
-    </section>
- 
-    <div class="footer">
-        <h2>© 南京工程学院·创新创业学院·A104</h2>
-        <p>联系邮箱: 2819136493@qq.com</p>
-    </div>
-
-    <script>
-        // 导航栏高亮效果
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.section, .address-section');
-            const navLinks = document.querySelectorAll('.top-nav a');
-            
-            // 监听滚动事件
-            window.addEventListener('scroll', function() {
-                let current = '';
-                
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    if (scrollY >= (sectionTop - 150)) {
-                        current = section.getAttribute('id');
-                    }
-                });
-                
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').substring(1) === current) {
-                        link.classList.add('active');
-                    }
-                });
-            });
-        });
-  // 内部用户账号配置（15个成员）
-        const internalUsers = {
-            // 管理员账号
-            "admin": { password: "admin2024", role: "admin", name: "管理员" },
-            "张老师": { password: "teacher123", role: "teacher", name: "张老师" },
-            "李老师": { password: "teacher456", role: "teacher", name: "李老师" },
-            
-            // 学生成员账号
-            "刘焱坤": { password: "lyk123", role: "student", name: "刘焱坤" },
-            "许晨辉": { password: "xch123", role: "student", name: "许晨辉" },
-            "林俊杰": { password: "ljj123", role: "student", name: "林俊杰" },
-            "张家兴": { password: "zjx123", role: "student", name: "张家兴" },
-            "王世涛": { password: "wst123", role: "student", name: "王世涛" },
-            "王燕茹": { password: "wyr123", role: "student", name: "王燕茹" },
-            "newstudent": { password: "zyj123", role: "student", name: "张雨佳" },
-            "吴十": { password: "student008", role: "student", name: "吴十" },
-            "郑十一": { password: "student009", role: "student", name: "郑十一" },
-            "王十二": { password: "student010", role: "student", name: "王十二" },
-            "李十三": { password: "student011", role: "student", name: "李十三" },
-            "张十四": { password: "student012", role: "student", name: "张十四" },
-            "刘十五": { password: "student013", role: "student", name: "刘十五" }
-        };
-
-        // 用户认证管理
-        class AuthManager {
-            constructor() {
-                this.currentUser = null;
-                this.init();
-            }
-
-            init() {
-                this.loadUserFromStorage();
-                this.updateUI();
-                this.bindEvents();
-            }
-
-            loadUserFromStorage() {
-                const userData = localStorage.getItem('lab_currentUser');
-                if (userData) {
-                    this.currentUser = JSON.parse(userData);
-                    // 验证用户是否仍然有效（可选）
-                    if (!internalUsers[this.currentUser.username]) {
-                        this.logout();
-                    }
-                }
-            }
-
-            saveUserToStorage() {
-                if (this.currentUser) {
-                    localStorage.setItem('lab_currentUser', JSON.stringify(this.currentUser));
-                } else {
-                    localStorage.removeItem('lab_currentUser');
-                }
-            }
-
-            login(username, password) {
-                if (internalUsers[username] && internalUsers[username].password === password) {
-                    this.currentUser = {
-                        username: username,
-                        name: internalUsers[username].name,
-                        role: internalUsers[username].role,
-                        loginTime: new Date().toISOString()
-                    };
-                    this.saveUserToStorage();
-                    this.updateUI();
-                    closeLoginModal();
-                    return true;
-                }
-                return false;
-            }
-
-            logout() {
-                this.currentUser = null;
-                this.saveUserToStorage();
-                this.updateUI();
-            }
-
-            isLoggedIn() {
-                return this.currentUser !== null;
-            }
-
-            updateUI() {
-                const guestMenu = document.getElementById('guest-menu');
-                const userMenu = document.getElementById('user-menu');
-                const protectedElements = document.querySelectorAll('.protected-content');
-
-                if (this.isLoggedIn()) {
-                    guestMenu.style.display = 'none';
-                    userMenu.style.display = 'block';
-                    protectedElements.forEach(el => {
-                        el.style.display = 'block';
-                    });
-                    document.getElementById('username-display').textContent = this.currentUser.name;
-                } else {
-                    guestMenu.style.display = 'block';
-                    userMenu.style.display = 'none';
-                    protectedElements.forEach(el => {
-                        el.style.display = 'none';
-                    });
-                }
-            }
-
-            bindEvents() {
-                document.getElementById('loginForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleLogin();
-                });
-            }
-
-            handleLogin() {
-                const username = document.getElementById('loginUsername').value;
-                const password = document.getElementById('loginPassword').value;
-                const errorElement = document.getElementById('loginError');
-
-                if (this.login(username, password)) {
-                    errorElement.style.display = 'none';
-                } else {
-                    errorElement.style.display = 'block';
-                }
-            }
-        }
-
-        // 初始化认证管理器
-        const authManager = new AuthManager();
-
-        // 模态框控制函数
-        function openLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').style.display = 'none';
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-
-        function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                authManager.logout();
-            }
-        }
-
-        // 点击模态框外部关闭
-        window.addEventListener('click', (e) => {
-            const modal = document.getElementById('loginModal');
-            if (e.target === modal) {
-                closeLoginModal();
-            }
-        });
-
-        // 回车键登录
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && document.getElementById('loginModal').style.display === 'flex') {
-                authManager.handleLogin();
-            }
-        });
-    </script>
+    <script src="script.js" defer></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
