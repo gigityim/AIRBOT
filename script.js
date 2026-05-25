@@ -24,13 +24,9 @@ class AuthManager {
             const user = JSON.parse(raw);
             if (user && internalUsers[user.username]) {
                 this.currentUser = user;
-            } else {
-                this.currentUser = null;
-                localStorage.removeItem("lab_currentUser");
             }
         } catch (e) {
             console.warn("加载本地登录状态失败：", e);
-            this.currentUser = null;
         }
     }
 
@@ -45,168 +41,173 @@ class AuthManager {
 
     login(username, password) {
         const user = internalUsers[username];
-        if (!user) return false;
-        if (user.password !== password) return false;
-
+        if (!user || user.password !== password) return false;
+        
         this.currentUser = {
             username,
             role: user.role,
             displayName: user.displayName,
         };
         this.saveUserToStorage();
-        this.updateUI();
         return true;
     }
 
     logout() {
         this.currentUser = null;
         this.clearStorage();
-        this.updateUI();
     }
 
     isAuthenticated() {
         return !!this.currentUser;
-    }
-
-    updateUI() {
-        const guestMenu = document.querySelector('[data-role="guest-menu"]');
-        const userMenu = document.querySelector('[data-role="user-menu"]');
-        const usernameSpan = document.querySelector('[data-role="username-display"]');
-        const protectedBlocks = document.querySelectorAll(".protected-content");
-
-        if (this.isAuthenticated()) {
-            if (guestMenu) guestMenu.style.display = "none";
-            if (userMenu) userMenu.style.display = "flex";
-            if (usernameSpan) {
-                usernameSpan.textContent =
-                    this.currentUser.displayName || this.currentUser.username;
-            }
-            protectedBlocks.forEach((el) => el.classList.add("is-visible"));
-        } else {
-            if (guestMenu) guestMenu.style.display = "block";
-            if (userMenu) userMenu.style.display = "none";
-            protectedBlocks.forEach((el) => el.classList.remove("is-visible"));
-        }
     }
 }
 
 const authManager = new AuthManager();
 
 document.addEventListener("DOMContentLoaded", () => {
-    authManager.updateUI();
+    initNavbar();
+    initMobileMenu();
+    initLoginModal();
+    initScrollToTop();
+    initContactForm();
+    initSectionAnimations();
+});
 
+function initNavbar() {
+    const navbar = document.querySelector(".navbar");
+    const navLinks = document.querySelectorAll(".nav-links a, .mobile-menu a");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
+        updateActiveNav();
+    });
+
+    navLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const href = link.getAttribute("href");
+            if (href.startsWith("#")) {
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: "smooth" });
+                    closeMobileMenu();
+                }
+            }
+        });
+    });
+
+    function updateActiveNav() {
+        const sections = document.querySelectorAll("section[id]");
+        let currentSection = "";
+
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 150) {
+                currentSection = section.id;
+            }
+        });
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            link.classList.toggle("active", href === `#${currentSection}`);
+        });
+    }
+}
+
+function initMobileMenu() {
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.style.display = mobileMenu.style.display === "flex" ? "none" : "flex";
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            closeMobileMenu();
+        }
+    });
+}
+
+function closeMobileMenu() {
+    const mobileMenu = document.getElementById("mobileMenu");
+    mobileMenu.style.display = "none";
+}
+
+function initLoginModal() {
+    const loginBtn = document.getElementById("loginBtn");
+    const mobileLoginBtn = document.querySelector(".mobile-login-btn");
     const modal = document.getElementById("loginModal");
-    const openButtons = document.querySelectorAll('[data-role="open-login"]');
-    const closeButtons = document.querySelectorAll('[data-role="close-login"]');
+    const modalClose = document.getElementById("modalClose");
     const loginForm = document.getElementById("loginForm");
     const loginError = document.getElementById("loginError");
-    const logoutButtons = document.querySelectorAll('[data-role="logout"]');
 
     const openModal = () => {
-        if (!modal) return;
         modal.classList.add("is-open");
-        loginError && (loginError.hidden = true);
-        const userInput = document.getElementById("loginUsername");
-        const pwdInput = document.getElementById("loginPassword");
-        if (userInput) userInput.value = "";
-        if (pwdInput) pwdInput.value = "";
-        userInput && userInput.focus();
+        loginError.hidden = true;
+        document.body.style.overflow = "hidden";
     };
 
     const closeModal = () => {
-        if (!modal) return;
         modal.classList.remove("is-open");
+        document.body.style.overflow = "";
     };
 
-    openButtons.forEach((btn) => {
-        btn.addEventListener("click", openModal);
+    loginBtn.addEventListener("click", openModal);
+    mobileLoginBtn.addEventListener("click", () => {
+        openModal();
+        closeMobileMenu();
+    });
+    modalClose.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
     });
 
-    closeButtons.forEach((btn) => {
-        btn.addEventListener("click", closeModal);
-    });
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const username = loginForm.username.value.trim();
+        const password = loginForm.password.value;
 
-    if (modal) {
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-    }
-
-    if (loginForm) {
-        loginForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const username = loginForm.username.value.trim();
-            const password = loginForm.password.value;
-
-            const success = authManager.login(username, password);
-            if (success) {
-                if (loginError) loginError.hidden = true;
-                closeModal();
-            } else {
-                if (loginError) loginError.hidden = false;
-            }
-        });
-    }
-
-    logoutButtons.forEach((btn) => {
-        btn.addEventListener("click", () => authManager.logout());
-    });
-
-    const sections = document.querySelectorAll(
-        ".section[id], .address-section[id]"
-    );
-    const navLinks = document.querySelectorAll(".top-nav a");
-
-    const updateActiveNav = () => {
-        const scrollY = window.scrollY;
-        let currentId = null;
-
-        sections.forEach((section) => {
-            const rect = section.getBoundingClientRect();
-            const offsetTop = rect.top + window.scrollY;
-            const sectionHeight = rect.height;
-
-            if (
-                scrollY >= offsetTop - 160 &&
-                scrollY < offsetTop + sectionHeight - 160
-            ) {
-                currentId = section.id;
-            }
-        });
-
-        navLinks.forEach((link) => {
-            const href = link.getAttribute("href") || "";
-            const hash = href.startsWith("#") ? href.slice(1) : null;
-            link.classList.toggle("active", hash === currentId);
-        });
-    };
-
-    updateActiveNav();
-    window.addEventListener("scroll", updateActiveNav);
-
-    const scrollToTopBtn = document.getElementById("scrollToTop");
-
-    const toggleScrollToTop = () => {
-        if (window.scrollY > 300) {
-            scrollToTopBtn.classList.add("visible");
+        if (authManager.login(username, password)) {
+            closeModal();
+            loginForm.reset();
+            showNotification("登录成功！", "success");
         } else {
-            scrollToTopBtn.classList.remove("visible");
+            loginError.hidden = false;
         }
-    };
+    });
+}
 
-    window.addEventListener("scroll", toggleScrollToTop);
+function initScrollToTop() {
+    const scrollBtn = document.getElementById("scrollToTop");
 
-    if (scrollToTopBtn) {
-        scrollToTopBtn.addEventListener("click", () => {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+    window.addEventListener("scroll", () => {
+        scrollBtn.classList.toggle("visible", window.scrollY > 500);
+    });
+
+    scrollBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+}
+
+function initContactForm() {
+    const contactForm = document.getElementById("contactForm");
+    
+    if (contactForm) {
+        contactForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            showNotification("留言已发送，我们会尽快回复您！", "success");
+            contactForm.reset();
         });
     }
+}
 
+function initSectionAnimations() {
     const observerOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
@@ -221,7 +222,59 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }, observerOptions);
 
-    document.querySelectorAll(".card, .section, .award-item").forEach(el => {
+    document.querySelectorAll(".product-card, .research-card, .award-item, .feature-item, .about-text").forEach(el => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(30px)";
+        el.style.transition = "all 0.6s ease-out";
         observer.observe(el);
     });
-});
+}
+
+function showNotification(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+        notification.classList.remove("show");
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+const style = document.createElement("style");
+style.textContent = `
+    .notification {
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        z-index: 3000;
+        transform: translateX(150%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    
+    .notification-success {
+        background: linear-gradient(135deg, #00ff88, #00cc6a);
+        color: #0a0e17;
+    }
+    
+    .notification-info {
+        background: linear-gradient(135deg, #00d4ff, #0099cc);
+        color: #0a0e17;
+    }
+`;
+document.head.appendChild(style);
