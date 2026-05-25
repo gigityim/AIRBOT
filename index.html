@@ -15,18 +15,15 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- 顶部大图 + 登录区 -->
     <header class="header">
         <div class="header-logo">
             <img src="picture/logo.png" alt="实验室 Logo" />
         </div>
 
         <div class="user-menu" data-role="user-menu-wrapper">
-            <!-- 未登录时显示 -->
             <div data-role="guest-menu">
                 <button class="login-btn" data-role="open-login">内部登录</button>
             </div>
-            <!-- 已登录时显示 -->
             <div data-role="user-menu" style="display: none;">
                 <div class="user-info">
                     <span data-role="username-display">用户</span>
@@ -39,7 +36,6 @@
         <p>四旋翼机器人与轮式机器人</p>
     </header>
 
-    <!-- 顶部导航栏（单一导航） -->
     <nav class="top-nav">
         <div class="top-nav-container">
             <a href="#about">关于我们</a>
@@ -51,10 +47,8 @@
         </div>
     </nav>
 
-    <!-- 页面主体 -->
     <main class="page">
         <div class="row">
-            <!-- 左侧：关于 / 加入 / 常用链接 -->
             <aside class="side">
                 <section id="about" class="section">
                     <h2 class="section-title">关于我们</h2>
@@ -71,7 +65,7 @@
 
                 <section id="join" class="section">
                     <h2 class="section-title">如何加入</h2>
-                    <h3>2025 届大一招新群：</h3>
+                    <h5>2025 届大一招新群：</h5>
                     <img
                         src="picture/QR.jpg"
                         alt="2025届大一招新群"
@@ -95,39 +89,51 @@
 
                 <section class="section">
                     <h2 class="section-title">常用链接</h2>
-                    <ul class="link-list">
-                        <li>
-                            <a href="https://www.runoob.com/" target="_blank" rel="noopener noreferrer nofollow">
-                                菜鸟教程
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.bilibili.com/" target="_blank" rel="noopener noreferrer">
-                                Bilibili
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://www.limestart.cn/" target="_blank" rel="noopener noreferrer">
-                                青柠导航页
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://qsqs.life/register?code=CqKcdGIm/" target="_blank" rel="noopener noreferrer nofollow">
-                                青山网络解决方案
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://ehall.njit.edu.cn/new/index.html" target="_blank" rel="noopener noreferrer nofollow">
-                                南京工程学院信息门户
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="link-item">
+                        <span class="link-name">菜鸟教程</span>
+                        <span class="link-url">www.runoob.com</span>
+                        <a href="https://www.runoob.com/" target="_blank" rel="noopener noreferrer nofollow" class="link-overlay"></a>
+                    </div>
+                    <div class="link-item">
+                        <span class="link-name">Bilibili</span>
+                        <span class="link-url">www.bilibili.com</span>
+                        <a href="https://www.bilibili.com/" target="_blank" rel="noopener noreferrer" class="link-overlay"></a>
+                    </div>
+                    <div class="link-item">
+                        <span class="link-name">青柠导航页</span>
+                        <span class="link-url">www.limestart.cn</span>
+                        <a href="https://www.limestart.cn/" target="_blank" rel="noopener noreferrer" class="link-overlay"></a>
+                    </div>
+                    <div class="link-item">
+                        <span class="link-name">青山网络解决方案</span>
+                        <span class="link-url">qsqs.life</span>
+                        <a href="https://qsqs.life/register?code=CqKcdGIm/" target="_blank" rel="noopener noreferrer nofollow" class="link-overlay"></a>
+                    </div>
+                    <div class="link-item">
+                        <span class="link-name">南京工程学院信息门户</span>
+                        <span class="link-url">ehall.njit.edu.cn</span>
+                        <a href="http://ehall.njit.edu.cn/new/index.html" target="_blank" rel="noopener noreferrer nofollow" class="link-overlay"></a>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h3 class="section-subtitle">快捷跳转区</h3>
+                        <div class="link-item" style="cursor: not-allowed; opacity: 0.6;">
+                            <span class="link-name">🔗 跳转链接 1</span>
+                            <span class="link-url">待添加</span>
+                        </div>
+                        <div class="link-item" style="cursor: not-allowed; opacity: 0.6;">
+                            <span class="link-name">🔗 跳转链接 2</span>
+                            <span class="link-url">待添加</span>
+                        </div>
+                        <div class="link-item" style="cursor: not-allowed; opacity: 0.6;">
+                            <span class="link-name">🔗 跳转链接 3</span>
+                            <span class="link-url">待添加</span>
+                        </div>
+                    </div>
                 </section>
             </aside>
 
-            <!-- 右侧：获奖 / 资料 / 项目 / 地址 -->
             <section class="main">
-                <!-- 最新获奖独立 section，对应 #awards -->
                 <section id="awards" class="section">
                     <div class="card">
                         <h2 class="section-title">信息公开 · 最新获奖</h2>
@@ -157,14 +163,12 @@
                     </div>
                 </section>
 
-                <!-- 资料下载 -->
                 <section id="materials" class="section">
                     <h2 class="section-title">
                         资料下载
                         <span class="protected-badge">内部资源</span>
                     </h2>
 
-                    <!-- 受保护：登录后可见 -->
                     <div class="protected-content" data-protected-block="materials">
                         <div class="card">
                             <h3>🔒 实验室内部文档</h3>
@@ -185,35 +189,45 @@
                         </div>
                     </div>
 
-                    <!-- 公开资源（无需登录） -->
                     <h3 class="section-subtitle">公开资源</h3>
                     <div class="card">
                         <h4>学习资源</h4>
-                        <ul>
-                            <li>
-                                <a href="https://fishros.com/" target="_blank" rel="noopener noreferrer">
-                                    ROS 机器人操作系统入门
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://blog.csdn.net/" target="_blank" rel="noopener noreferrer">
-                                    无人机基本原理（CSDN 教程）
-                                </a>
-                            </li>
-                            <li><a href="#">机器视觉基础</a></li>
-                        </ul>
+                        <div class="link-item">
+                            <span class="link-name">ROS 机器人操作系统入门</span>
+                            <span class="link-url">fishros.com</span>
+                            <a href="https://fishros.com/" target="_blank" rel="noopener noreferrer" class="link-overlay"></a>
+                        </div>
+                        <div class="link-item">
+                            <span class="link-name">无人机基本原理（CSDN 教程）</span>
+                            <span class="link-url">blog.csdn.net</span>
+                            <a href="https://blog.csdn.net/" target="_blank" rel="noopener noreferrer" class="link-overlay"></a>
+                        </div>
+                        <div class="link-item">
+                            <span class="link-name">机器视觉基础</span>
+                            <span class="link-url">待添加链接</span>
+                            <a href="#" class="link-overlay"></a>
+                        </div>
                     </div>
                     <div class="card">
                         <h4>开发工具</h4>
-                        <ul>
-                            <li><a href="#">Gazebo 仿真环境配置</a></li>
-                            <li><a href="#">PX4 飞控开发指南</a></li>
-                            <li><a href="#">OpenCV 环境配置说明</a></li>
-                        </ul>
+                        <div class="link-item">
+                            <span class="link-name">Gazebo 仿真环境配置</span>
+                            <span class="link-url">待添加链接</span>
+                            <a href="#" class="link-overlay"></a>
+                        </div>
+                        <div class="link-item">
+                            <span class="link-name">PX4 飞控开发指南</span>
+                            <span class="link-url">待添加链接</span>
+                            <a href="#" class="link-overlay"></a>
+                        </div>
+                        <div class="link-item">
+                            <span class="link-name">OpenCV 环境配置说明</span>
+                            <span class="link-url">待添加链接</span>
+                            <a href="#" class="link-overlay"></a>
+                        </div>
                     </div>
                 </section>
 
-                <!-- 项目展示（只有一个 #projects） -->
                 <section id="projects" class="section">
                     <div class="card protected-content" data-protected-block="projects">
                         <h2 class="section-title">
@@ -238,7 +252,6 @@
                     </div>
                 </section>
 
-                <!-- 地址 / 联系方式 -->
                 <section id="address" class="address-section">
                     <h2 class="section-title">地址</h2>
                     <div class="address-content">
@@ -253,13 +266,11 @@
         </div>
     </main>
 
-    <!-- 页脚 -->
     <footer class="footer">
         <h2>© 南京工程学院 · 创新创业学院 · A104</h2>
         <p>联系邮箱：2819136493@qq.com</p>
     </footer>
 
-    <!-- 登录模态框 -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <button class="modal-close" data-role="close-login">&times;</button>
@@ -294,6 +305,8 @@
             </form>
         </div>
     </div>
+
+    <button class="scroll-to-top" id="scrollToTop" title="返回顶部">↑</button>
 
     <script src="script.js" defer></script>
 </body>
