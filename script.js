@@ -1,6 +1,3 @@
-// ===============================
-//  前端演示用账号（仅示例）
-// ===============================
 const internalUsers = {
     admin: {
         password: "admin2024",
@@ -14,9 +11,6 @@ const internalUsers = {
     },
 };
 
-// ===============================
-//  登录状态管理（仅前端演示）
-// ===============================
 class AuthManager {
     constructor() {
         this.currentUser = null;
@@ -98,14 +92,9 @@ class AuthManager {
 
 const authManager = new AuthManager();
 
-// ===============================
-//  DOM 事件绑定
-// ===============================
 document.addEventListener("DOMContentLoaded", () => {
-    // 初始刷新 UI（根据 localStorage 恢复登录状态）
     authManager.updateUI();
 
-    // --- 登录模态框控制 ---
     const modal = document.getElementById("loginModal");
     const openButtons = document.querySelectorAll('[data-role="open-login"]');
     const closeButtons = document.querySelectorAll('[data-role="close-login"]');
@@ -117,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!modal) return;
         modal.classList.add("is-open");
         loginError && (loginError.hidden = true);
-        // 清空输入
         const userInput = document.getElementById("loginUsername");
         const pwdInput = document.getElementById("loginPassword");
         if (userInput) userInput.value = "";
@@ -138,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", closeModal);
     });
 
-    // 点击遮罩关闭
     if (modal) {
         modal.addEventListener("click", (e) => {
             if (e.target === modal) {
@@ -147,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 登录表单提交
     if (loginForm) {
         loginForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -164,14 +150,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 退出登录
     logoutButtons.forEach((btn) => {
         btn.addEventListener("click", () => authManager.logout());
     });
 
-    // ===============================
-    //  导航滚动高亮
-    // ===============================
     const sections = document.querySelectorAll(
         ".section[id], .address-section[id]"
     );
@@ -203,4 +185,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateActiveNav();
     window.addEventListener("scroll", updateActiveNav);
+
+    const scrollToTopBtn = document.getElementById("scrollToTop");
+
+    const toggleScrollToTop = () => {
+        if (window.scrollY > 300) {
+            scrollToTopBtn.classList.add("visible");
+        } else {
+            scrollToTopBtn.classList.remove("visible");
+        }
+    };
+
+    window.addEventListener("scroll", toggleScrollToTop);
+
+    if (scrollToTopBtn) {
+        scrollToTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    }
+
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = "1";
+                entry.target.style.transform = "translateY(0)";
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll(".card, .section, .award-item").forEach(el => {
+        observer.observe(el);
+    });
 });
