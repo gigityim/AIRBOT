@@ -1,12 +1,6 @@
-
+// 1. 后端 API 基础地址 (本地开发时使用)
 const API_BASE_URL = "http://127.0.0.1:8000/api";
 
-class AuthManager {
-    constructor() {
-        this.currentUser = null;
-        this.loadUserFromStorage();
-}
-}
 class AuthManager {
     constructor() {
         this.currentUser = null;
@@ -17,10 +11,7 @@ class AuthManager {
         try {
             const raw = localStorage.getItem("lab_currentUser");
             if (!raw) return;
-            const user = JSON.parse(raw);
-            if (user && internalUsers[user.username]) {
-                this.currentUser = user;
-            }
+            this.currentUser = JSON.parse(raw);
         } catch (e) {
             console.warn("加载本地登录状态失败：", e);
         }
@@ -35,15 +26,14 @@ class AuthManager {
         localStorage.removeItem("lab_currentUser");
     }
 
-async login(username, password) {
+    // 改造为真实的后端请求
+    async login(username, password) {
         try {
-            // 向 Python 后端发送 POST 请求
             const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                // 将用户名和密码打包成 JSON 发送
                 body: JSON.stringify({ username, password })
             });
 
@@ -51,15 +41,14 @@ async login(username, password) {
                 const data = await response.json();
                 this.currentUser = {
                     username,
-                    role: "member", // 后续可以让后端返回具体角色
+                    role: "member",
                     displayName: username,
                 };
                 this.saveUserToStorage();
                 return { success: true, message: data.message };
             } else {
-                // 如果密码错误，后端会返回 401 状态码和 detail
                 const errorData = await response.json();
-                return { success: false, message: errorData.detail || "登录失败" };
+                return { success: false, message: errorData.detail || "用户名或密码错误" };
             }
         } catch (error) {
             console.error("网络请求失败：", error);
@@ -183,21 +172,19 @@ function initLoginModal() {
         if (e.target === modal) closeModal();
     });
 
+    // 改造为异步提交
     loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // 阻止表单默认跳转行为
         const username = loginForm.username.value.trim();
         const password = loginForm.password.value;
 
-        // 给按钮加个“登录中”的提示，防止重复点击
         const submitBtn = loginForm.querySelector('.submit-btn');
         const originalText = submitBtn.textContent;
         submitBtn.textContent = '登录中...';
         submitBtn.disabled = true;
 
-        // 等待后端响应
         const result = await authManager.login(username, password);
 
-        // 恢复按钮状态
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
 
@@ -206,7 +193,7 @@ function initLoginModal() {
             loginForm.reset();
             showNotification(result.message, "success");
         } else {
-            loginError.textContent = result.message; // 显示后端的错误信息
+            loginError.textContent = result.message;
             loginError.hidden = false;
         }
     });
@@ -224,19 +211,19 @@ function initScrollToTop() {
     });
 }
 
+// 改造为真实后端请求
 function initContactForm() {
     const contactForm = document.getElementById("contactForm");
     
     if (contactForm) {
         contactForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // 极其重要：阻止默认跳转行为
             
             const submitBtn = contactForm.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = '发送中...';
             submitBtn.disabled = true;
 
-            // 获取表单数据
             const formData = {
                 name: contactForm.name.value,
                 email: contactForm.email.value,
@@ -245,7 +232,6 @@ function initContactForm() {
             };
 
             try {
-                // 向 Python 后端发送留言数据
                 const response = await fetch(`${API_BASE_URL}/contact`, {
                     method: 'POST',
                     headers: {
@@ -263,7 +249,7 @@ function initContactForm() {
                 }
             } catch (error) {
                 console.error("提交留言失败：", error);
-                showNotification("无法连接到服务器，请稍后重试", "error");
+                showNotification("无法连接到服务器，请检查后端是否运行", "error");
             } finally {
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
@@ -335,6 +321,11 @@ style.textContent = `
     .notification-success {
         background: linear-gradient(135deg, #00ff88, #00cc6a);
         color: #0a0e17;
+    }
+    
+    .notification-error {
+        background: linear-gradient(135deg, #ff4d4f, #cc0000);
+        color: white;
     }
     
     .notification-info {
