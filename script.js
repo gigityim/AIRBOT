@@ -1,16 +1,12 @@
-const internalUsers = {
-    admin: {
-        password: "admin2024",
-        role: "admin",
-        displayName: "管理员",
-    },
-    member: {
-        password: "member2024",
-        role: "member",
-        displayName: "实验室成员",
-    },
-};
 
+const API_BASE_URL = "http://127.0.0.1:8000/api";
+
+class AuthManager {
+    constructor() {
+        this.currentUser = null;
+        this.loadUserFromStorage();
+}
+}
 class AuthManager {
     constructor() {
         this.currentUser = null;
@@ -39,17 +35,36 @@ class AuthManager {
         localStorage.removeItem("lab_currentUser");
     }
 
-    login(username, password) {
-        const user = internalUsers[username];
-        if (!user || user.password !== password) return false;
-        
-        this.currentUser = {
-            username,
-            role: user.role,
-            displayName: user.displayName,
-        };
-        this.saveUserToStorage();
-        return true;
+async login(username, password) {
+        try {
+            // 向 Python 后端发送 POST 请求
+            const response = await fetch(`${API_BASE_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // 将用户名和密码打包成 JSON 发送
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.currentUser = {
+                    username,
+                    role: "member", // 后续可以让后端返回具体角色
+                    displayName: username,
+                };
+                this.saveUserToStorage();
+                return { success: true, message: data.message };
+            } else {
+                // 如果密码错误，后端会返回 401 状态码和 detail
+                const errorData = await response.json();
+                return { success: false, message: errorData.detail || "登录失败" };
+            }
+        } catch (error) {
+            console.error("网络请求失败：", error);
+            return { success: false, message: "无法连接到服务器，请检查后端是否运行" };
+        }
     }
 
     logout() {
@@ -168,16 +183,30 @@ function initLoginModal() {
         if (e.target === modal) closeModal();
     });
 
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const username = loginForm.username.value.trim();
         const password = loginForm.password.value;
 
-        if (authManager.login(username, password)) {
+        // 给按钮加个“登录中”的提示，防止重复点击
+        const submitBtn = loginForm.querySelector('.submit-btn');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = '登录中...';
+        submitBtn.disabled = true;
+
+        // 等待后端响应
+        const result = await authManager.login(username, password);
+
+        // 恢复按钮状态
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+
+        if (result.success) {
             closeModal();
             loginForm.reset();
-            showNotification("登录成功！", "success");
+            showNotification(result.message, "success");
         } else {
+            loginError.textContent = result.message; // 显示后端的错误信息
             loginError.hidden = false;
         }
     });
@@ -199,10 +228,46 @@ function initContactForm() {
     const contactForm = document.getElementById("contactForm");
     
     if (contactForm) {
-        contactForm.addEventListener("submit", (e) => {
+        contactForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            showNotification("留言已发送，我们会尽快回复您！", "success");
-            contactForm.reset();
+            
+            const submitBtn = contactForm.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '发送中...';
+            submitBtn.disabled = true;
+
+            // 获取表单数据
+            const formData = {
+                name: contactForm.name.value,
+                email: contactForm.email.value,
+                phone: contactForm.phone.value || "",
+                message: contactForm.message.value
+            };
+
+            try {
+                // 向 Python 后端发送留言数据
+                const response = await fetch(`${API_BASE_URL}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showNotification(data.message, "success");
+                    contactForm.reset();
+                } else {
+                    showNotification("服务器繁忙，留言失败", "error");
+                }
+            } catch (error) {
+                console.error("提交留言失败：", error);
+                showNotification("无法连接到服务器，请稍后重试", "error");
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
         });
     }
 }
