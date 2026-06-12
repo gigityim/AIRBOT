@@ -1,4 +1,4 @@
-
+// 1. 后端 API 基础地址 (已经配置好你的内网穿透域名)
 const API_BASE_URL = "https://api.airbot.top/api";
 
 class AuthManager {
@@ -26,7 +26,6 @@ class AuthManager {
         localStorage.removeItem("lab_currentUser");
     }
 
-    // 改造为真实的后端请求
     async login(username, password) {
         try {
             const response = await fetch(`${API_BASE_URL}/login`, {
@@ -68,17 +67,113 @@ class AuthManager {
 
 const authManager = new AuthManager();
 
+// 页面加载完成后的初始化
 document.addEventListener("DOMContentLoaded", () => {
     initNavbar();
     initMobileMenu();
     initLoginModal();
     initScrollToTop();
     initContactForm();
-    initSectionAnimations();
-    loadDynamicProjects(); 
+    
+    // 动态拉取数据库数据
+    loadDynamicProjects();
     loadDynamicMembers();
+    
+    // 初始化基础的静态元素动画
+    initSectionAnimations();
 });
 
+// ==========================================
+// 动态渲染：产品中心
+// ==========================================
+async function loadDynamicProjects() {
+    const productsGrid = document.querySelector('.products-grid');
+    if (!productsGrid) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/projects`);
+        if (response.ok) {
+            const result = await response.json();
+            
+            if (result.code === 200 && result.data.length > 0) {
+                productsGrid.innerHTML = ''; // 清空原有静态内容
+                
+                result.data.forEach(project => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.style.opacity = "0";
+                    card.style.transform = "translateY(30px)";
+                    
+                    const specsHtml = project.specs.split('|').map(s => `<span>${s.trim()}</span>`).join('');
+
+                    card.innerHTML = `
+                        <div class="product-image">
+                            <img src="${project.image_url}" alt="${project.title}" onerror="this.src='picture/1.jpg'" />
+                        </div>
+                        <div class="product-info">
+                            <h3>${project.title}</h3>
+                            <p>${project.description}</p>
+                            <div class="product-specs">
+                                ${specsHtml}
+                            </div>
+                            <button class="product-btn">了解详情 →</button>
+                        </div>
+                    `;
+                    productsGrid.appendChild(card);
+                });
+                
+                // 给新生成的卡片绑定动画
+                initSectionAnimations();
+            }
+        }
+    } catch (error) {
+        console.error('动态加载项目失败:', error);
+    }
+}
+
+// ==========================================
+// 动态渲染：成员风采
+// ==========================================
+async function loadDynamicMembers() {
+    const membersGrid = document.querySelector('.members-grid');
+    if (!membersGrid) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/members`);
+        if (response.ok) {
+            const result = await response.json();
+            if (result.code === 200 && result.data.length > 0) {
+                membersGrid.innerHTML = ''; // 清空占位符
+                
+                result.data.forEach(member => {
+                    const card = document.createElement('div');
+                    card.className = 'feature-item'; 
+                    card.style.opacity = "0";
+                    card.style.transform = "translateY(30px)";
+                    // 让卡片在成员区更好看一些
+                    card.style.minWidth = "250px";
+                    card.style.flex = "1";
+                    
+                    card.innerHTML = `
+                        <div class="feature-number" style="font-size: 1.8rem; color: var(--primary-color);">${member.name}</div>
+                        <div class="feature-label" style="font-weight: bold; margin: 10px 0; color: white;">${member.role}</div>
+                        <p style="font-size: 0.95rem; color: #a0aec0; margin-top: 10px; line-height: 1.5;">${member.description}</p>
+                    `;
+                    membersGrid.appendChild(card);
+                });
+                
+                // 给新生成的卡片绑定动画
+                initSectionAnimations();
+            }
+        }
+    } catch (error) {
+        console.error('动态加载成员失败:', error);
+    }
+}
+
+// ==========================================
+// 以下是各种 UI 交互函数
+// ==========================================
 function initNavbar() {
     const navbar = document.querySelector(".navbar");
     const navLinks = document.querySelectorAll(".nav-links a, .mobile-menu a");
@@ -174,9 +269,8 @@ function initLoginModal() {
         if (e.target === modal) closeModal();
     });
 
-    // 改造为异步提交
     loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault(); // 阻止表单默认跳转行为
+        e.preventDefault();
         const username = loginForm.username.value.trim();
         const password = loginForm.password.value;
 
@@ -203,23 +297,20 @@ function initLoginModal() {
 
 function initScrollToTop() {
     const scrollBtn = document.getElementById("scrollToTop");
-
     window.addEventListener("scroll", () => {
         scrollBtn.classList.toggle("visible", window.scrollY > 500);
     });
-
     scrollBtn.addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 }
 
-// 改造为真实后端请求
 function initContactForm() {
     const contactForm = document.getElementById("contactForm");
     
     if (contactForm) {
         contactForm.addEventListener("submit", async (e) => {
-            e.preventDefault(); // 极其重要：阻止默认跳转行为
+            e.preventDefault(); 
             
             const submitBtn = contactForm.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
@@ -275,9 +366,8 @@ function initSectionAnimations() {
         });
     }, observerOptions);
 
+    // 监听所有需要动画的卡片
     document.querySelectorAll(".product-card, .research-card, .award-item, .feature-item, .about-text").forEach(el => {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(30px)";
         el.style.transition = "all 0.6s ease-out";
         observer.observe(el);
     });
@@ -299,6 +389,7 @@ function showNotification(message, type = "info") {
     }, 3000);
 }
 
+// 动态注入弹窗样式
 const style = document.createElement("style");
 style.textContent = `
     .notification {
@@ -314,112 +405,9 @@ style.textContent = `
         opacity: 0;
         transition: all 0.3s ease;
     }
-    
-    .notification.show {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    
-    .notification-success {
-        background: linear-gradient(135deg, #00ff88, #00cc6a);
-        color: #0a0e17;
-    }
-    
-    .notification-error {
-        background: linear-gradient(135deg, #ff4d4f, #cc0000);
-        color: white;
-    }
-    
-    .notification-info {
-        background: linear-gradient(135deg, #00d4ff, #0099cc);
-        color: #0a0e17;
-    }
+    .notification.show { transform: translateX(0); opacity: 1; }
+    .notification-success { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0a0e17; }
+    .notification-error { background: linear-gradient(135deg, #ff4d4f, #cc0000); color: white; }
+    .notification-info { background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e17; }
 `;
 document.head.appendChild(style);
-// ==========================================
-// 动态渲染：产品中心
-// ==========================================
-async function loadDynamicProjects() {
-    const productsGrid = document.querySelector('.products-grid');
-    if (!productsGrid) return;
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/projects`);
-        if (response.ok) {
-            const result = await response.json();
-            
-            if (result.code === 200 && result.data.length > 0) {
-                // 清空原先写死的静态 HTML 代码
-                productsGrid.innerHTML = ''; 
-                
-                // 遍历数据库传来的每一个项目，动态生成卡片
-                result.data.forEach(project => {
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
-                    // 为了保证新生成的卡片也能有淡入动画，我们把初始透明度设为0
-                    card.style.opacity = "0"; 
-                    card.style.transform = "translateY(30px)";
-                    card.style.transition = "all 0.6s ease-out";
-                    
-                    // 解析出用 | 分割的多个参数
-                    const specsHtml = project.specs.split('|').map(s => `<span>${s.trim()}</span>`).join('');
-
-                    card.innerHTML = `
-                        <div class="product-image">
-                            <img src="${project.image_url}" alt="${project.title}" onerror="this.src='picture/1.jpg'" />
-                        </div>
-                        <div class="product-info">
-                            <h3>${project.title}</h3>
-                            <p>${project.description}</p>
-                            <div class="product-specs">
-                                ${specsHtml}
-                            </div>
-                            <button class="product-btn">了解详情 →</button>
-                        </div>
-                    `;
-                    productsGrid.appendChild(card);
-                });
-                
-                // 重新绑定滚动动画监听器到新生成的卡片上
-                initSectionAnimations(); 
-            }
-        }
-    } catch (error) {
-        console.error('动态加载项目失败:', error);
-    }
-}
-
-// ==========================================
-// 动态渲染：成员风采 (准备好，下一步我们会在 HTML 加个位置放他们)
-// ==========================================
-async function loadDynamicMembers() {
-    const membersGrid = document.querySelector('.members-grid');
-    if (!membersGrid) return;
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/members`);
-        if (response.ok) {
-            const result = await response.json();
-            if (result.code === 200 && result.data.length > 0) {
-                membersGrid.innerHTML = '';
-                result.data.forEach(member => {
-                    const card = document.createElement('div');
-                    card.className = 'feature-item'; // 借用你写好的特征卡片样式
-                    card.style.opacity = "0";
-                    card.style.transform = "translateY(30px)";
-                    card.style.transition = "all 0.6s ease-out";
-                    
-                    card.innerHTML = `
-                        <div class="feature-number" style="font-size: 1.5rem; color: var(--primary-color);">${member.name}</div>
-                        <div class="feature-label" style="font-weight: bold; margin: 10px 0;">${member.role}</div>
-                        <p style="font-size: 0.9rem; color: #a0aec0; margin-top: 10px;">${member.description}</p>
-                    `;
-                    membersGrid.appendChild(card);
-                });
-                initSectionAnimations();
-            }
-        }
-    } catch (error) {
-        console.error('动态加载成员失败:', error);
-    }
-}
