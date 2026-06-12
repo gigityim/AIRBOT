@@ -328,86 +328,104 @@ body::before {
     align-items: center;
 }
 
+/* ========================================== */
+/* 酷炫 3D 全息四旋翼无人机动画 */
+/* ========================================== */
 .drone-container {
     position: relative;
-    animation: float 6s ease-in-out infinite;
+    /* 引入 3D 透视空间 */
+    perspective: 1200px; 
+    animation: floatDrone 5s ease-in-out infinite;
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(2deg); }
+@keyframes floatDrone {
+    0%, 100% { transform: translateY(0) rotateX(5deg) rotateY(-5deg); }
+    50% { transform: translateY(-25px) rotateX(15deg) rotateY(5deg); }
 }
 
 .drone {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 280px;
+    height: 280px;
+    transform-style: preserve-3d;
+    /* 让无人机以 3D 视角向前下方倾斜，非常酷炫 */
+    transform: rotateX(65deg) rotateZ(-45deg); 
 }
 
+/* 机身核心 */
 .drone-body {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80px;
-    height: 120px;
-    background: linear-gradient(135deg, #1a1f2e, #2a3448);
+    height: 80px;
+    background: linear-gradient(135deg, #111827, #1f2937);
+    border: 2px solid var(--primary-color);
     border-radius: 20px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.9);
+    z-index: 10;
 }
 
-.drone-body::before {
-    content: "";
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    border-radius: 50%;
-    opacity: 0.8;
-}
-
-.rotor {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    border: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 0.1s linear infinite;
-}
-
-.rotor::before {
+/* 核心呼吸眼 */
+.drone-body::after {
     content: "";
     position: absolute;
     top: 50%;
-    left: -10px;
-    width: 80px;
-    height: 4px;
-    background: var(--primary-color);
-    transform: translateY(-50%);
-}
-
-.rotor::after {
-    content: "";
-    position: absolute;
-    top: -10px;
     left: 50%;
-    width: 4px;
-    height: 80px;
-    background: var(--primary-color);
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulseEye 2s infinite;
 }
 
-.rotor-1 { top: 0; left: 0; }
-.rotor-2 { top: 0; right: 0; }
-.rotor-3 { bottom: 0; left: 0; }
-.rotor-4 { bottom: 0; right: 0; }
+@keyframes pulseEye {
+    0%, 100% { box-shadow: 0 0 10px var(--accent-color); opacity: 0.7; }
+    50% { box-shadow: 0 0 30px var(--accent-color), 0 0 50px var(--accent-color); opacity: 1; }
+}
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+/* X型碳纤维机臂 */
+.arm {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 6px;
+    background: linear-gradient(90deg, #374151, #111827);
+    transform-origin: 0 50%;
+    border-radius: 3px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+
+.arm-1 { transform: translate(0, -50%) rotate(45deg); }
+.arm-2 { transform: translate(0, -50%) rotate(135deg); }
+.arm-3 { transform: translate(0, -50%) rotate(225deg); }
+.arm-4 { transform: translate(0, -50%) rotate(315deg); }
+
+/* 高速旋转的全息桨叶 */
+.rotor {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    /* 用圆锥渐变模拟桨叶高速转动的残影 */
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 212, 255, 0.4) 60deg, transparent 180deg, rgba(0, 212, 255, 0.4) 240deg, transparent 360deg);
+    animation: fastSpin 0.15s linear infinite;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    backdrop-filter: blur(2px);
+}
+
+.rotor-1 { top: -25px; left: -25px; }
+.rotor-2 { top: -25px; right: -25px; }
+.rotor-3 { bottom: -25px; left: -25px; }
+.rotor-4 { bottom: -25px; right: -25px; }
+
+@keyframes fastSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .hero-scroll {
