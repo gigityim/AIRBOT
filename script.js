@@ -36,12 +36,13 @@ class AuthManager {
                 body: JSON.stringify({ username, password })
             });
 
-            if (response.ok) {
+             if (response.ok) {
                 const data = await response.json();
                 this.currentUser = {
                     username,
                     role: "member",
                     displayName: username,
+                    token: data.token // 核心新增：把后端发来的钥匙存起来！
                 };
                 this.saveUserToStorage();
                 return { success: true, message: data.message };
@@ -411,3 +412,49 @@ style.textContent = `
     .notification-info { background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e17; }
 `;
 document.head.appendChild(style);
+// ==========================================
+// 私密文件下载与内部资源请求功能
+// ==========================================
+async function downloadSecretFile(filename) {
+    if (!authManager.isAuthenticated()) {
+        showNotification("请先进行内部登录！", "error");
+        return;
+    }
+
+    const token = authManager.currentUser.token;
+    
+    showNotification("正在请求最高权限数据，请稍候...", "info");
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/download/${filename}`, {
+            method: 'GET',
+            headers: {
+                // 核心：在请求头里亮出你的 JWT 钥匙！
+                'Authorization': `Bearer ${token}` 
+            }
+        });
+
+        if (response.ok) {
+            // 将后端的二进制文件流转换为浏览器可下载的 Blob
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            // 模拟点击下载
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            
+            showNotification("机密文件下载成功！", "success");
+        } else {
+            const errorData = await response.json();
+            showNotification(errorData.detail || "下载失败，权限不足或文件不存在", "error");
+        }
+    } catch (error) {
+        console.error("下载请求失败:", error);
+        showNotification("网络错误，无法连接到安全服务器", "error");
+    }
+}
