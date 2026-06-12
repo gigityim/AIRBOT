@@ -75,6 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initScrollToTop();
     initContactForm();
     initSectionAnimations();
+    loadDynamicProjects(); 
+    loadDynamicMembers();
 });
 
 function initNavbar() {
@@ -334,3 +336,90 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+// ==========================================
+// 动态渲染：产品中心
+// ==========================================
+async function loadDynamicProjects() {
+    const productsGrid = document.querySelector('.products-grid');
+    if (!productsGrid) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/projects`);
+        if (response.ok) {
+            const result = await response.json();
+            
+            if (result.code === 200 && result.data.length > 0) {
+                // 清空原先写死的静态 HTML 代码
+                productsGrid.innerHTML = ''; 
+                
+                // 遍历数据库传来的每一个项目，动态生成卡片
+                result.data.forEach(project => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    // 为了保证新生成的卡片也能有淡入动画，我们把初始透明度设为0
+                    card.style.opacity = "0"; 
+                    card.style.transform = "translateY(30px)";
+                    card.style.transition = "all 0.6s ease-out";
+                    
+                    // 解析出用 | 分割的多个参数
+                    const specsHtml = project.specs.split('|').map(s => `<span>${s.trim()}</span>`).join('');
+
+                    card.innerHTML = `
+                        <div class="product-image">
+                            <img src="${project.image_url}" alt="${project.title}" onerror="this.src='picture/1.jpg'" />
+                        </div>
+                        <div class="product-info">
+                            <h3>${project.title}</h3>
+                            <p>${project.description}</p>
+                            <div class="product-specs">
+                                ${specsHtml}
+                            </div>
+                            <button class="product-btn">了解详情 →</button>
+                        </div>
+                    `;
+                    productsGrid.appendChild(card);
+                });
+                
+                // 重新绑定滚动动画监听器到新生成的卡片上
+                initSectionAnimations(); 
+            }
+        }
+    } catch (error) {
+        console.error('动态加载项目失败:', error);
+    }
+}
+
+// ==========================================
+// 动态渲染：成员风采 (准备好，下一步我们会在 HTML 加个位置放他们)
+// ==========================================
+async function loadDynamicMembers() {
+    const membersGrid = document.querySelector('.members-grid');
+    if (!membersGrid) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/members`);
+        if (response.ok) {
+            const result = await response.json();
+            if (result.code === 200 && result.data.length > 0) {
+                membersGrid.innerHTML = '';
+                result.data.forEach(member => {
+                    const card = document.createElement('div');
+                    card.className = 'feature-item'; // 借用你写好的特征卡片样式
+                    card.style.opacity = "0";
+                    card.style.transform = "translateY(30px)";
+                    card.style.transition = "all 0.6s ease-out";
+                    
+                    card.innerHTML = `
+                        <div class="feature-number" style="font-size: 1.5rem; color: var(--primary-color);">${member.name}</div>
+                        <div class="feature-label" style="font-weight: bold; margin: 10px 0;">${member.role}</div>
+                        <p style="font-size: 0.9rem; color: #a0aec0; margin-top: 10px;">${member.description}</p>
+                    `;
+                    membersGrid.appendChild(card);
+                });
+                initSectionAnimations();
+            }
+        }
+    } catch (error) {
+        console.error('动态加载成员失败:', error);
+    }
+}
