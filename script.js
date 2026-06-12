@@ -248,22 +248,41 @@ function initLoginModal() {
 // ==========================================
 // 内部机密资源面板 (纯 JS 动态生成)
 // ==========================================
+// ==========================================
+// 内部机密资源面板 (包含修改密码功能)
+// ==========================================
 async function openResourcePanel() {
-    // 创建一个全屏弹窗
     let panel = document.getElementById("resourcePanel");
     if (!panel) {
         panel = document.createElement("div");
         panel.id = "resourcePanel";
         panel.className = "modal";
+        
+        // 面板 HTML 结构：包含资源列表和修改密码折叠面板
         panel.innerHTML = `
-            <div class="modal-content" style="max-width: 600px; text-align: left;">
+            <div class="modal-content" style="max-width: 600px; text-align: left; max-height: 90vh; overflow-y: auto;">
                 <button class="modal-close" onclick="document.getElementById('resourcePanel').classList.remove('is-open'); document.body.style.overflow='';">&times;</button>
                 <h2 style="margin-bottom: 20px; color: var(--primary-color);">实验室内部控制台</h2>
+                
                 <div id="secretLinksArea">加载机密数据中...</div>
                 
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;">机密文件下载</h3>
                 <button onclick="downloadSecretFile('内部通讯录.txt')" class="btn-secondary" style="width: 100%; margin-bottom: 20px;">下载《内部通讯录.txt》</button>
                 
+                <h3 style="margin-top: 20px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #ffb86c;">账户安全</h3>
+                <form id="changePwdForm" onsubmit="submitChangePassword(event)" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333;">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="password" id="oldPwd" placeholder="请输入原密码" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="password" id="newPwd" placeholder="请输入新密码" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <input type="password" id="confirmPwd" placeholder="请确认新密码" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white;">
+                    </div>
+                    <button type="submit" id="pwdSubmitBtn" class="btn-secondary" style="width: 100%; border-color: #ffb86c; color: #ffb86c;">确认修改密码</button>
+                </form>
+
                 <button onclick="authManager.logout(); document.getElementById('resourcePanel').classList.remove('is-open');" class="submit-btn" style="background: #ff4d4f; color: white;">退出登录</button>
             </div>
         `;
@@ -273,16 +292,15 @@ async function openResourcePanel() {
     panel.classList.add("is-open");
     document.body.style.overflow = "hidden";
     
-    // 携带 JWT 钥匙向后端请求机密网址
+    // 拉取机密网址列表逻辑保持不变...
     const linksArea = document.getElementById("secretLinksArea");
     try {
         const response = await fetch(`${API_BASE_URL}/secret-links`, {
             headers: { 'Authorization': `Bearer ${authManager.currentUser.token}` }
         });
-        
         if (response.ok) {
             const result = await response.json();
-            let html = `<p style="color: #a0aec0; margin-bottom: 15px;">欢迎回来，权限级别：核心成员</p><ul style="list-style: none; padding: 0;">`;
+            let html = `<p style="color: #a0aec0; margin-bottom: 15px;">当前账户：<strong style="color:white;">${result.user}</strong></p><ul style="list-style: none; padding: 0;">`;
             result.data.forEach(link => {
                 html += `<li style="margin-bottom: 10px;">🔗 <a href="${link.url}" target="_blank" style="color: #00d4ff; text-decoration: none;">${link.name}</a></li>`;
             });
@@ -293,12 +311,52 @@ async function openResourcePanel() {
                 authManager.logout();
                 panel.classList.remove("is-open");
                 showNotification("登录状态已过期，请重新登录", "error");
-            } else {
-                linksArea.innerHTML = "<p style='color: red;'>获取数据失败，请检查网络</p>";
             }
         }
-    } catch (e) {
-        linksArea.innerHTML = "<p style='color: red;'>无法连接到安全服务器</p>";
+    } catch (e) { console.error(e); }
+}
+
+// 新增：提交修改密码的逻辑
+async function submitChangePassword(e) {
+    e.preventDefault();
+    const oldPwd = document.getElementById('oldPwd').value;
+    const newPwd = document.getElementById('newPwd').value;
+    const confirmPwd = document.getElementById('confirmPwd').value;
+
+    if (newPwd !== confirmPwd) {
+        showNotification("两次输入的新密码不一致！", "error");
+        return;
+    }
+
+    const submitBtn = document.getElementById('pwdSubmitBtn');
+    submitBtn.textContent = '修改中...';
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/change-password`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authManager.currentUser.token}` 
+            },
+            body: JSON.stringify({ old_password: oldPwd, new_password: newPwd })
+        });
+        const result = await response.json();
+        
+        if (response.ok) {
+            showNotification("密码修改成功！请重新登录", "success");
+            // 密码改了，强制退出让用户重新登录
+            authManager.logout();
+            document.getElementById('resourcePanel').classList.remove('is-open');
+        } else {
+            showNotification(result.detail || "修改失败", "error");
+        }
+    } catch (error) {
+        showNotification("网络错误", "error");
+    } finally {
+        submitBtn.textContent = '确认修改密码';
+        submitBtn.disabled = false;
+        document.getElementById('changePwdForm').reset();
     }
 }
 
