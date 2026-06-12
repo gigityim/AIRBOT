@@ -1,5 +1,5 @@
-// 1. 后端 API 基础地址 (本地开发时使用)
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+
+const API_BASE_URL = "https://api.airbot.top/api";
 
 class AuthManager {
     constructor() {
