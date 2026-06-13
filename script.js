@@ -134,7 +134,7 @@ async function loadDynamicProjects() {
                             <h3>${project.title}</h3>
                             <p>${project.description}</p>
                             <div class="product-specs">${specsHtml}</div>
-                            <button class="product-btn">了解详情 →</button>
+                            <button class="product-btn" onclick="showNotification('《${project.title}》详细手册正在努力编写中，您可以先在底部留言咨询！', 'info'); document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">了解详情 →</button>
                         </div>
                     `;
                     productsGrid.appendChild(card);
