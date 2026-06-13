@@ -46,6 +46,10 @@
                     <button class="btn-primary">了解更多</button>
                     <button class="btn-secondary">查看产品</button>
                 </div>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">了解更多</button>
+                    <button class="btn-secondary" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">查看产品</button>
+                </div>
             </div>
             <div class="hero-visual">
                 <div class="drone-container">
@@ -308,32 +312,32 @@
             <div class="footer-section">
                 <h4>资源中心</h4>
                 <ul>
-                    <li><a href="#">技术文档</a></li>
-                    <li><a href="#">学习资源</a></li>
-                    <li><a href="#">常见问题</a></li>
-                    <li><a href="#">下载中心</a></li>
+                    <li><a href="javascript:void(0)" onclick="showNotification('技术文档正在整理中，将在后续开放', 'info')">技术文档</a></li>
+                    <li><a href="javascript:void(0)" onclick="showNotification('学习资源更新中，敬请期待', 'info')">学习资源</a></li>
+                    <li><a href="javascript:void(0)" onclick="showNotification('常见问题总结中', 'info')">常见问题</a></li>
+                    <li><a href="javascript:void(0)" onclick="showNotification('下载中心暂未开放，机密文件请走内部登录', 'info')">下载中心</a></li>
                 </ul>
             </div>
+
             <div class="footer-section">
                 <h4>关注我们</h4>
                 <div class="social-links">
-                    <a href="#" class="social-link">微信</a>
-                    <a href="#" class="social-link">微博</a>
-                    <a href="#" class="social-link">GitHub</a>
-                    <a href="#" class="social-link">B站</a>
+                    <a href="javascript:void(0)" class="social-link" onclick="showNotification('请扫描下方二维码加入我们的微信交流群！', 'success')">微信</a>
+                    <a href="javascript:void(0)" class="social-link" onclick="showNotification('官方微博账号正在认证中', 'info')">微博</a>
+                    <a href="https://github.com/gigityim" target="_blank" class="social-link">GitHub</a>
+                    <a href="javascript:void(0)" class="social-link" onclick="showNotification('B站官方视频筹备中，敬请期待硬核展示！', 'info')">B站</a>
                 </div>
                 <div class="qr-code">
                     <img src="picture/QR.jpg" alt="招新群二维码" />
                     <span>招新群二维码</span>
                 </div>
             </div>
-        </div>
         <div class="footer-bottom">
             <p>© 2025 南京工程学院空中机器人实验室 版权所有</p>
             <div class="footer-links">
-                <a href="#">隐私政策</a>
-                <a href="#">使用条款</a>
-                <a href="#">网站地图</a>
+                <a href="javascript:void(0)" onclick="showNotification('隐私政策正在由学校法务审核中', 'info')">隐私政策</a>
+                <a href="javascript:void(0)" onclick="showNotification('使用条款拟定中', 'info')">使用条款</a>
+                <a href="javascript:void(0)" onclick="showNotification('网站地图建设中', 'info')">网站地图</a>
             </div>
         </div>
     </footer>
