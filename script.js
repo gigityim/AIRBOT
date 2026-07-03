@@ -268,6 +268,23 @@ async function openResourcePanel() {
                 
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;">机密文件下载</h3>
                 <button onclick="downloadSecretFile('内部通讯录.txt')" class="btn-secondary" style="width: 100%; margin-bottom: 20px;">下载《内部通讯录.txt》</button>
+
+
+                <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #00ff88;">🖨️ 实验室万能云打印</h3>
+                <form id="printForm" onsubmit="submitPrintJob(event)" style="background: rgba(0, 255, 136, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(0,255,136,0.2);">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="color: #a0aec0; font-size: 13px;">请选择文件 (支持 PDF, Word, JPG, PNG)</label>
+                        <input type="file" id="printFile" accept=".pdf,.doc,.docx,image/*" required style="width: 100%; color: white; padding: 10px 0;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="color: #a0aec0; font-size: 13px; display: block; margin-bottom: 5px;">打印模式</label>
+                        <select id="printMode" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 6px; color: white; outline: none;">
+                            <option value="single">单面打印</option>
+                            <option value="duplex">双面打印 (节约纸张)</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="printSubmitBtn" class="btn-secondary" style="width: 100%; border-color: #00ff88; color: #00ff88;">开始打印</button>
+                </form>
                 
                 <h3 style="margin-top: 20px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #ffb86c;">账户安全</h3>
                 <form id="changePwdForm" onsubmit="submitChangePassword(event)" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333;">
@@ -526,3 +543,57 @@ style.textContent = `
     .notification-info { background: linear-gradient(135deg, #00d4ff, #0099cc); color: #0a0e17; }
 `;
 document.head.appendChild(style);
+
+// ==========================================
+// 远程打印任务提交逻辑 (万能版)
+// ==========================================
+async function submitPrintJob(e) {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('printFile');
+    const printMode = document.getElementById('printMode').value; // 获取单双面设置
+    
+    if (fileInput.files.length === 0) {
+        showNotification("请先选择一个文件", "error");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    if (file.size > 20 * 1024 * 1024) {
+        showNotification("文件过大，请上传 20MB 以内的文件", "error");
+        return;
+    }
+
+    const submitBtn = document.getElementById('printSubmitBtn');
+    submitBtn.textContent = '文档解析与传输中...';
+    submitBtn.disabled = true;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("print_mode", printMode); // 传给后端的 "single" 或 "duplex"
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/print`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${authManager.currentUser.token}` 
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            showNotification(result.message, "success");
+            document.getElementById('printForm').reset();
+        } else {
+            showNotification(result.detail || "打印失败", "error");
+        }
+    } catch (error) {
+        console.error("打印请求错误:", error);
+        showNotification("网络错误，无法连接到打印服务器", "error");
+    } finally {
+        submitBtn.textContent = '开始打印';
+        submitBtn.disabled = false;
+    }
+}
