@@ -265,32 +265,6 @@ function initLoginModal() {
 
 
 
-    panel.classList.add("is-open");
-    document.body.style.overflow = "hidden";
-    
-    // 拉取机密网址列表逻辑保持不变...
-    const linksArea = document.getElementById("secretLinksArea");
-    try {
-        const response = await fetch(`${API_BASE_URL}/secret-links`, {
-            headers: { 'Authorization': `Bearer ${authManager.currentUser.token}` }
-        });
-        if (response.ok) {
-            const result = await response.json();
-            let html = `<p style="color: #a0aec0; margin-bottom: 15px;">当前账户：<strong style="color:white;">${result.user}</strong></p><ul style="list-style: none; padding: 0;">`;
-            result.data.forEach(link => {
-                html += `<li style="margin-bottom: 10px;">🔗 <a href="${link.url}" target="_blank" style="color: #00d4ff; text-decoration: none;">${link.name}</a></li>`;
-            });
-            html += `</ul>`;
-            linksArea.innerHTML = html;
-        } else {
-            if (response.status === 401) {
-                authManager.logout();
-                panel.classList.remove("is-open");
-                showNotification("登录状态已过期，请重新登录", "error");
-            }
-        }
-    } catch (e) { console.error(e); }
-}
 
 // 新增：提交修改密码的逻辑
 async function submitChangePassword(e) {
