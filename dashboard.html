@@ -42,6 +42,70 @@
         .tab-content.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ========================================== */
+        /* 移动端适配 (响应式设计)                      */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* 从左右布局改为上下布局 */
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row; /* 菜单项横向排列 */
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+                overflow-x: auto; /* 允许手指横向滑动菜单 */
+                align-items: center;
+                /* 隐藏底部的丑陋滚动条，但保留滑动功能 */
+                -ms-overflow-style: none;  
+                scrollbar-width: none;  
+            }
+            .sidebar::-webkit-scrollbar { 
+                display: none; 
+            }
+            .logo-area {
+                padding: 0 15px 0 0;
+                border-bottom: none;
+                border-right: 1px solid rgba(255,255,255,0.1);
+                margin-bottom: 0;
+                margin-right: 5px;
+                flex-shrink: 0; /* 防止 Logo 被挤压变形 */
+            }
+            .logo-area h2 { 
+                font-size: 16px; 
+            }
+            .logo-area p { 
+                display: none; /* 手机上隐藏副标题节省空间 */
+            }
+            .menu-item {
+                padding: 10px 15px;
+                white-space: nowrap; /* 保证文字不换行 */
+                border-right: none !important;
+                border-bottom: 3px solid transparent; /* 激活条从右边移到下边 */
+            }
+            .menu-item:hover, .menu-item.active {
+                background: rgba(0, 212, 255, 0.1);
+                border-bottom: 3px solid #00d4ff;
+            }
+            .logout-btn {
+                margin-top: 0;
+                padding: 10px 15px;
+                white-space: nowrap;
+            }
+            .main-content {
+                padding: 15px; /* 缩小手机端的主区域边距 */
+            }
+            .card {
+                padding: 20px; /* 缩小卡片内边距 */
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 20px;
+                margin-bottom: 20px !important;
+            }
+        }
     </style>
 </head>
 <body>
