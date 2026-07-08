@@ -97,12 +97,31 @@ function updateAuthUI() {
     const loginBtn = document.getElementById("loginBtn");
     const mobileLoginBtn = document.querySelector(".mobile-login-btn");
     
+    // 清除可能存在的旧事件防止冲突
+    loginBtn.onclick = null;
+    if(mobileLoginBtn) mobileLoginBtn.onclick = null;
+
     if (authManager.isAuthenticated()) {
-        loginBtn.textContent = "内部资源";
-        if(mobileLoginBtn) mobileLoginBtn.textContent = "内部资源";
+        // 已登录：按钮变成进入控制台
+        loginBtn.textContent = "进入控制台 →";
+        loginBtn.onclick = () => window.location.href = 'dashboard.html';
+        
+        if(mobileLoginBtn) {
+            mobileLoginBtn.textContent = "进入控制台 →";
+            mobileLoginBtn.onclick = () => window.location.href = 'dashboard.html';
+        }
     } else {
+        // 未登录：按钮保持内部登录，点击弹出你原有的 loginModal
         loginBtn.textContent = "内部登录";
-        if(mobileLoginBtn) mobileLoginBtn.textContent = "内部登录";
+        loginBtn.onclick = () => document.getElementById("loginModal").classList.add("is-open");
+        
+        if(mobileLoginBtn) {
+            mobileLoginBtn.textContent = "内部登录";
+            mobileLoginBtn.onclick = () => {
+                document.getElementById("loginModal").classList.add("is-open");
+                closeMobileMenu();
+            };
+        }
     }
 }
 
@@ -236,8 +255,7 @@ function initLoginModal() {
         if (result.success) {
             closeLoginModal();
             loginForm.reset();
-            updateAuthUI();
-            showNotification(result.message, "success");
+            window.location.href = 'dashboard.html';
         } else {
             loginError.textContent = result.message;
             loginError.hidden = false;
@@ -245,66 +263,7 @@ function initLoginModal() {
     });
 }
 
-// ==========================================
-// 内部机密资源面板 (纯 JS 动态生成)
-// ==========================================
-// ==========================================
-// 内部机密资源面板 (包含修改密码功能)
-// ==========================================
-async function openResourcePanel() {
-    let panel = document.getElementById("resourcePanel");
-    if (!panel) {
-        panel = document.createElement("div");
-        panel.id = "resourcePanel";
-        panel.className = "modal";
-        
-        // 面板 HTML 结构：包含资源列表和修改密码折叠面板
-        panel.innerHTML = `
-            <div class="modal-content" style="max-width: 600px; text-align: left; max-height: 90vh; overflow-y: auto;">
-                <button class="modal-close" onclick="document.getElementById('resourcePanel').classList.remove('is-open'); document.body.style.overflow='';">&times;</button>
-                <h2 style="margin-bottom: 20px; color: var(--primary-color);">实验室内部控制台</h2>
-                
-                <div id="secretLinksArea">加载机密数据中...</div>
-                
-                <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;">机密文件下载</h3>
-                <button onclick="downloadSecretFile('内部通讯录.txt')" class="btn-secondary" style="width: 100%; margin-bottom: 20px;">下载《内部通讯录.txt》</button>
 
-
-                <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #00ff88;">🖨️ 实验室万能云打印</h3>
-                <form id="printForm" onsubmit="submitPrintJob(event)" style="background: rgba(0, 255, 136, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(0,255,136,0.2);">
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="color: #a0aec0; font-size: 13px;">请选择文件 (支持 PDF, Word, JPG, PNG)</label>
-                        <input type="file" id="printFile" accept=".pdf,.doc,.docx,image/*" required style="width: 100%; color: white; padding: 10px 0;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="color: #a0aec0; font-size: 13px; display: block; margin-bottom: 5px;">打印模式</label>
-                        <select id="printMode" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 6px; color: white; outline: none;">
-                            <option value="single">单面打印</option>
-                            <option value="duplex">双面打印 (节约纸张)</option>
-                        </select>
-                    </div>
-                    <button type="submit" id="printSubmitBtn" class="btn-secondary" style="width: 100%; border-color: #00ff88; color: #00ff88;">开始打印</button>
-                </form>
-                
-                <h3 style="margin-top: 20px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; color: #ffb86c;">账户安全</h3>
-                <form id="changePwdForm" onsubmit="submitChangePassword(event)" style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333;">
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="password" id="oldPwd" placeholder="请输入原密码" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="password" id="newPwd" placeholder="请输入新密码" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <input type="password" id="confirmPwd" placeholder="请确认新密码" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white;">
-                    </div>
-                    <button type="submit" id="pwdSubmitBtn" class="btn-secondary" style="width: 100%; border-color: #ffb86c; color: #ffb86c;">确认修改密码</button>
-                </form>
-
-                <button onclick="authManager.logout(); document.getElementById('resourcePanel').classList.remove('is-open');" class="submit-btn" style="background: #ff4d4f; color: white;">退出登录</button>
-            </div>
-        `;
-        document.body.appendChild(panel);
-    }
 
     panel.classList.add("is-open");
     document.body.style.overflow = "hidden";
