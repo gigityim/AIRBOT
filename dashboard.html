@@ -20,122 +20,152 @@
 
         /* 右侧主区域 */
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.05), transparent 50%); }
-        .card { background: rgba(17, 24, 39, 0.8); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 30px; max-width: 600px; }
-        .card h3 { margin-bottom: 20px; color: #00d4ff; font-size: 22px; }
+        .card { background: rgba(17, 24, 39, 0.8); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 30px; max-width: 600px; margin-bottom: 30px; }
+        .card h3 { margin-bottom: 20px; color: #00d4ff; font-size: 20px; border-bottom: 1px solid rgba(0,212,255,0.2); padding-bottom: 10px; }
         
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #a0aec0; font-size: 14px; }
-        .form-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white; transition: 0.3s; }
-        .form-group input:focus { border-color: #00d4ff; outline: none; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white; transition: 0.3s; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: #00d4ff; }
         
-        .btn { padding: 12px 24px; background: linear-gradient(135deg, #00d4ff, #0099cc); border: none; border-radius: 6px; color: #0a0e17; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn { padding: 12px 24px; background: linear-gradient(135deg, #00d4ff, #0099cc); border: none; border-radius: 6px; color: #0a0e17; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3); }
+        
+        .btn-outline { background: transparent; border: 1px solid #00d4ff; color: #00d4ff; }
+        .btn-outline:hover { background: rgba(0,212,255,0.1); }
 
         .notification { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; font-weight: bold; transform: translateX(150%); transition: 0.3s; z-index: 1000; }
         .notif-show { transform: translateX(0); }
+        
+        /* 隐藏除了默认之外的面板 */
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <!-- 侧边栏 -->
+    <!-- 侧边栏菜单 -->
     <div class="sidebar">
         <div class="logo-area" onclick="window.location.href='index.html'">
             <h2>NJIT-AIRBOT</h2>
             <p style="font-size: 12px; color: #666; margin-top: 5px;">返回官网首页</p>
         </div>
-        <div class="menu-item active">👤 个人中心</div>
-        <div class="menu-item" onclick="alert('即将迁移：此处可放入云打印模块')">🖨️ 实验室云打印</div>
-        <div class="menu-item" onclick="alert('即将迁移：此处可放入机密资料下载')">📁 机密资料</div>
+        <div class="menu-item active" onclick="switchTab('profile', this)">👤 个人中心</div>
+        <div class="menu-item" onclick="switchTab('print', this)">🖨️ 实验室云打印</div>
+        <div class="menu-item" onclick="switchTab('secret', this)">📁 机密资料</div>
         <div class="logout-btn" onclick="doLogout()">🚪 安全退出</div>
     </div>
 
-    <!-- 主内容区 -->
+    <!-- 右侧内容区域 -->
     <div class="main-content">
-        <h2 style="margin-bottom: 30px; font-weight: 300;">欢迎回来，<span id="welcomeName" style="color: #00d4ff; font-weight: bold;">加载中...</span></h2>
+        <h2 style="margin-bottom: 30px; font-weight: 300;">控制面板 <span style="color: #444;">/</span> <span id="welcomeName" style="color: #00d4ff; font-weight: bold;">加载中...</span></h2>
         
-        <div class="card">
-            <h3>资料绑定与修改</h3>
-            <form id="profileForm">
-                <div class="form-group">
-                    <label>关联学号</label>
-                    <input type="text" id="studentId" placeholder="请输入您的学号">
+        <!-- 面板 1：个人中心与密码修改 -->
+        <div id="tab-profile" class="tab-content active">
+            <div class="card">
+                <h3>资料绑定与修改</h3>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>关联学号</label>
+                        <input type="text" id="studentId" placeholder="请输入您的学号">
+                    </div>
+                    <div class="form-group">
+                        <label>联系手机</label>
+                        <input type="tel" id="phone" placeholder="请输入11位手机号">
+                    </div>
+                    <div class="form-group">
+                        <label>内部邮箱</label>
+                        <input type="email" id="email" placeholder="请输入常用邮箱">
+                    </div>
+                    <button type="submit" class="btn" id="saveBtn">保存信息修改</button>
+                </form>
+            </div>
+
+            <div class="card" style="border-color: rgba(255, 184, 108, 0.4);">
+                <h3 style="color: #ffb86c; border-bottom-color: rgba(255, 184, 108, 0.2);">账户安全 (修改密码)</h3>
+                <form id="pwdForm">
+                    <div class="form-group"><input type="password" id="oldPwd" placeholder="请输入原密码" required></div>
+                    <div class="form-group"><input type="password" id="newPwd" placeholder="请输入新密码" required></div>
+                    <div class="form-group"><input type="password" id="confirmPwd" placeholder="请确认新密码" required></div>
+                    <button type="submit" class="btn btn-outline" id="pwdBtn" style="border-color: #ffb86c; color: #ffb86c;">确认修改密码</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 面板 2：万能云打印 -->
+        <div id="tab-print" class="tab-content">
+            <div class="card" style="border-color: rgba(0, 255, 136, 0.4);">
+                <h3 style="color: #00ff88; border-bottom-color: rgba(0, 255, 136, 0.2);">远程万能云打印</h3>
+                <p style="color: #a0aec0; font-size: 14px; margin-bottom: 20px;">请确保实验室打印机处于开机状态。支持 PDF、Word 及各种图片格式。</p>
+                <form id="printForm">
+                    <div class="form-group">
+                        <label>请选择文件</label>
+                        <input type="file" id="printFile" accept=".pdf,.doc,.docx,image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>排版模式</label>
+                        <select id="printMode">
+                            <option value="single">单面打印</option>
+                            <option value="duplex">双面打印 (推荐/节约纸张)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" id="printSubmitBtn" style="background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0a0e17;">🚀 发送至打印机</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 面板 3：机密资料库 -->
+        <div id="tab-secret" class="tab-content">
+            <div class="card">
+                <h3>内部机密资源索引</h3>
+                <div id="secretLinksArea">
+                    <p style="color: #a0aec0;">加载数据中，请稍候...</p>
                 </div>
-                <div class="form-group">
-                    <label>联系手机</label>
-                    <input type="tel" id="phone" placeholder="请输入11位手机号">
-                </div>
-                <div class="form-group">
-                    <label>内部邮箱</label>
-                    <input type="email" id="email" placeholder="请输入常用邮箱">
-                </div>
-                <button type="submit" class="btn" id="saveBtn">保存修改</button>
-            </form>
+            </div>
+
+            <div class="card">
+                <h3>文件安全下载</h3>
+                <p style="color: #a0aec0; font-size: 14px; margin-bottom: 20px;">系统已验证您的核心成员身份，以下文件可进行离线下载。</p>
+                <!-- 这里你可以随时添加你需要让大家下载的文件名 -->
+                <button onclick="downloadSecretFile('内部通讯录.txt')" class="btn btn-outline" style="margin-bottom: 15px;">下载《内部通讯录.txt》</button>
+            </div>
         </div>
     </div>
 
+    <!-- 逻辑控制脚本 -->
     <script>
-        const API_BASE_URL = "https://api.airbot.top/api";
+        // ======= 注意：如果你的内网穿透没开，请暂时改回 127.0.0.1 =======
+        const API_BASE_URL = "https://api.airbot.top/api"; 
         
-        // 1. 验证是否登录
+        // 1. 拦截未登录人员
         const rawUser = localStorage.getItem("lab_currentUser");
-        if (!rawUser) {
-            window.location.href = "index.html"; // 没登录直接踢回首页
-        }
+        if (!rawUser) window.location.href = "index.html"; 
         const currentUser = JSON.parse(rawUser);
         document.getElementById("welcomeName").textContent = currentUser.username;
 
-        // 2. 加载个人信息
-        async function loadProfile() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/user/profile`, {
-                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
-                });
-                if (response.ok) {
-                    const res = await response.json();
-                    document.getElementById("studentId").value = res.data.student_id || "";
-                    document.getElementById("phone").value = res.data.phone || "";
-                    document.getElementById("email").value = res.data.email || "";
-                } else if (response.status === 401) {
-                    doLogout(); // Token 过期
-                }
-            } catch (e) {
-                console.error("加载信息失败", e);
-            }
-        }
-        loadProfile();
-
-        // 3. 提交修改表单
-        document.getElementById("profileForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById("saveBtn");
-            saveBtn.textContent = "保存中...";
+        // 2. 选项卡切换功能
+        function switchTab(tabId, el) {
+            // 改颜色
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+            // 切面板
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            const payload = {
-                student_id: document.getElementById("studentId").value,
-                phone: document.getElementById("phone").value,
-                email: document.getElementById("email").value
-            };
+            // 如果切到机密区，自动加载网址数据
+            if(tabId === 'secret') loadSecretLinks();
+        }
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/user/profile`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (response.ok) {
-                    showToast("个人信息保存成功！", "#00ff88", "#0a0e17");
-                } else {
-                    showToast("保存失败，请检查网络", "#ff4d4f", "white");
-                }
-            } catch (error) {
-                showToast("服务器连接异常", "#ff4d4f", "white");
-            } finally {
-                saveBtn.textContent = "保存修改";
-            }
-        });
+        // 3. 通用提示框函数
+        function showToast(msg, bg, color) {
+            const toast = document.createElement("div");
+            toast.className = "notification notif-show";
+            toast.style.background = bg; toast.style.color = color; toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.classList.remove("notif-show"); setTimeout(() => toast.remove(), 300); }, 2500);
+        }
 
         // 4. 退出登录
         function doLogout() {
@@ -143,15 +173,110 @@
             window.location.href = "index.html";
         }
 
-        // 简易提示框
-        function showToast(msg, bg, color) {
-            const toast = document.createElement("div");
-            toast.className = "notification notif-show";
-            toast.style.background = bg;
-            toast.style.color = color;
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => { toast.classList.remove("notif-show"); setTimeout(() => toast.remove(), 300); }, 2500);
+        // ================= 面板 1 逻辑：个人信息与密码 =================
+        async function loadProfile() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/profile`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                if (response.ok) {
+                    const res = await response.json();
+                    document.getElementById("studentId").value = res.data.student_id || "";
+                    document.getElementById("phone").value = res.data.phone || "";
+                    document.getElementById("email").value = res.data.email || "";
+                } else if (response.status === 401) doLogout(); 
+            } catch (e) { console.error("加载信息失败", e); }
+        }
+        loadProfile();
+
+        document.getElementById("profileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("saveBtn"); btn.textContent = "保存中...";
+            const payload = {
+                student_id: document.getElementById("studentId").value,
+                phone: document.getElementById("phone").value,
+                email: document.getElementById("email").value
+            };
+            try {
+                const res = await fetch(`${API_BASE_URL}/user/profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) showToast("个人信息保存成功！", "#00ff88", "#0a0e17");
+                else showToast("保存失败", "#ff4d4f", "white");
+            } catch (e) { showToast("网络错误", "#ff4d4f", "white"); } 
+            finally { btn.textContent = "保存信息修改"; }
+        });
+
+        document.getElementById("pwdForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const oldP = document.getElementById("oldPwd").value;
+            const newP = document.getElementById("newPwd").value;
+            const conP = document.getElementById("confirmPwd").value;
+            if (newP !== conP) { showToast("两次新密码不一致！", "#ff4d4f", "white"); return; }
+            
+            const btn = document.getElementById("pwdBtn"); btn.textContent = "修改中...";
+            try {
+                const res = await fetch(`${API_BASE_URL}/change-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` },
+                    body: JSON.stringify({ old_password: oldP, new_password: newP })
+                });
+                if (res.ok) { showToast("密码修改成功，请重新登录", "#00ff88", "#0a0e17"); setTimeout(doLogout, 1500); }
+                else { const data = await res.json(); showToast(data.detail || "修改失败", "#ff4d4f", "white"); }
+            } catch (e) { showToast("网络错误", "#ff4d4f", "white"); } 
+            finally { btn.textContent = "确认修改密码"; }
+        });
+
+        // ================= 面板 2 逻辑：云打印 =================
+        document.getElementById("printForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('printFile');
+            const mode = document.getElementById('printMode').value;
+            if (fileInput.files.length === 0) return;
+            if (fileInput.files[0].size > 20 * 1024 * 1024) { showToast("文件不能超过20MB", "#ff4d4f", "white"); return; }
+
+            const btn = document.getElementById("printSubmitBtn"); btn.textContent = "文档解析与传输中..."; btn.disabled = true;
+            const fd = new FormData(); fd.append("file", fileInput.files[0]); fd.append("print_mode", mode);
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/print`, {
+                    method: 'POST', headers: { 'Authorization': `Bearer ${currentUser.token}` }, body: fd
+                });
+                if (res.ok) { showToast("打印任务已发送！", "#00ff88", "#0a0e17"); e.target.reset(); }
+                else { const data = await res.json(); showToast(data.detail || "打印失败", "#ff4d4f", "white"); }
+            } catch (e) { showToast("连接打印服务器失败", "#ff4d4f", "white"); } 
+            finally { btn.textContent = "🚀 发送至打印机"; btn.disabled = false; }
+        });
+
+        // ================= 面板 3 逻辑：机密资料 =================
+        async function loadSecretLinks() {
+            const area = document.getElementById("secretLinksArea");
+            try {
+                const res = await fetch(`${API_BASE_URL}/secret-links`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    let html = `<ul style="list-style: none; padding: 0; line-height: 2;">`;
+                    data.data.forEach(link => {
+                        html += `<li>🔗 <a href="${link.url}" target="_blank" style="color: #a0aec0; text-decoration: none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#a0aec0'">${link.name}</a></li>`;
+                    });
+                    html += `</ul>`;
+                    area.innerHTML = html;
+                }
+            } catch (e) { area.innerHTML = "<p style='color: #ff4d4f;'>数据加载失败</p>"; }
+        }
+
+        async function downloadSecretFile(filename) {
+            showToast("正在请求机密文件...", "#00d4ff", "#0a0e17");
+            try {
+                const res = await fetch(`${API_BASE_URL}/download/${filename}`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url; a.download = filename;
+                    document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+                    showToast("下载成功！", "#00ff88", "#0a0e17");
+                } else { const data = await res.json(); showToast(data.detail || "文件不存在或无权限", "#ff4d4f", "white"); }
+            } catch (e) { showToast("下载请求失败", "#ff4d4f", "white"); }
         }
     </script>
 </body>
