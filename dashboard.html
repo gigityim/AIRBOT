@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验室内部控制台 | AIRBOT</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+        body { background: #0a0e17; color: white; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* 左侧边栏 */
+        .sidebar { width: 250px; background: #111827; border-right: 1px solid rgba(0, 212, 255, 0.2); padding: 20px 0; display: flex; flex-direction: column; }
+        .logo-area { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; text-align: center; }
+        .logo-area h2 { color: #00d4ff; font-size: 20px; cursor: pointer; }
+        
+        .menu-item { padding: 15px 25px; color: #a0aec0; cursor: pointer; transition: all 0.3s; font-size: 15px; }
+        .menu-item:hover, .menu-item.active { background: rgba(0, 212, 255, 0.1); color: #00d4ff; border-right: 3px solid #00d4ff; }
+        .logout-btn { margin-top: auto; padding: 15px 25px; color: #ff4d4f; cursor: pointer; transition: all 0.3s; }
+        .logout-btn:hover { background: rgba(255, 77, 79, 0.1); }
+
+        /* 右侧主区域 */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.05), transparent 50%); }
+        .card { background: rgba(17, 24, 39, 0.8); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 30px; max-width: 600px; margin-bottom: 30px; }
+        .card h3 { margin-bottom: 20px; color: #00d4ff; font-size: 20px; border-bottom: 1px solid rgba(0,212,255,0.2); padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #a0aec0; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 6px; color: white; transition: 0.3s; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: #00d4ff; }
+        
+        .btn { padding: 12px 24px; background: linear-gradient(135deg, #00d4ff, #0099cc); border: none; border-radius: 6px; color: #0a0e17; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3); }
+        
+        .btn-outline { background: transparent; border: 1px solid #00d4ff; color: #00d4ff; }
+        .btn-outline:hover { background: rgba(0,212,255,0.1); }
+        .orders-toolbar { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+        .orders-toolbar select { max-width: 220px; }
+        .orders-list { display: grid; gap: 14px; max-width: 980px; }
+        .order-card { background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; }
+        .order-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        .order-no { color: #00d4ff; font-weight: bold; }
+        .order-status { color: #00ff88; font-size: 13px; white-space: nowrap; }
+        .order-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; color: #a0aec0; font-size: 14px; margin-bottom: 14px; }
+        .order-grid strong { color: white; font-weight: 600; }
+        .order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .order-actions .btn { width: auto; min-width: 120px; padding: 9px 13px; font-size: 13px; }
+        .order-actions a { text-decoration: none; display: inline-block; }
+        .empty-state { color: #a0aec0; padding: 20px; border: 1px dashed rgba(255,255,255,0.18); border-radius: 8px; text-align: center; }
+
+        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; font-weight: bold; transform: translateX(150%); transition: 0.3s; z-index: 1000; }
+        .notif-show { transform: translateX(0); }
+        
+        /* 隐藏除了默认之外的面板 */
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ========================================== */
+        /* 移动端适配 (响应式设计)                      */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* 从左右布局改为上下布局 */
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row; /* 菜单项横向排列 */
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+                overflow-x: auto; /* 允许手指横向滑动菜单 */
+                align-items: center;
+                /* 隐藏底部的丑陋滚动条，但保留滑动功能 */
+                -ms-overflow-style: none;  
+                scrollbar-width: none;  
+            }
+            .sidebar::-webkit-scrollbar { 
+                display: none; 
+            }
+            .logo-area {
+                padding: 0 15px 0 0;
+                border-bottom: none;
+                border-right: 1px solid rgba(255,255,255,0.1);
+                margin-bottom: 0;
+                margin-right: 5px;
+                flex-shrink: 0; /* 防止 Logo 被挤压变形 */
+            }
+            .logo-area h2 { 
+                font-size: 16px; 
+            }
+            .logo-area p { 
+                display: none; /* 手机上隐藏副标题节省空间 */
+            }
+            .menu-item {
+                padding: 10px 15px;
+                white-space: nowrap; /* 保证文字不换行 */
+                border-right: none !important;
+                border-bottom: 3px solid transparent; /* 激活条从右边移到下边 */
+            }
+            .menu-item:hover, .menu-item.active {
+                background: rgba(0, 212, 255, 0.1);
+                border-bottom: 3px solid #00d4ff;
+            }
+            .logout-btn {
+                margin-top: 0;
+                padding: 10px 15px;
+                white-space: nowrap;
+            }
+            .main-content {
+                padding: 15px; /* 缩小手机端的主区域边距 */
+            }
+            .card {
+                padding: 20px; /* 缩小卡片内边距 */
+                margin-bottom: 20px;
+            }
+            .order-head, .orders-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .order-grid {
+                grid-template-columns: 1fr;
+            }
+            .order-actions .btn, .order-actions a {
+                width: 100%;
+            }
+            h2 {
+                font-size: 20px;
+                margin-bottom: 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 侧边栏菜单 -->
+    <div class="sidebar">
+        <div class="logo-area" onclick="window.location.href='index.html'">
+            <h2>NJIT-AIRBOT</h2>
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">返回官网首页</p>
+        </div>
+        <div class="menu-item active" onclick="switchTab('profile', this)">👤 个人中心</div>
+        <div class="menu-item" onclick="switchTab('print', this)">🖨️ 实验室云打印</div>
+        <div class="menu-item" onclick="switchTab('orders', this)">打印订单</div>
+        <div class="menu-item" onclick="switchTab('secret', this)">📁 机密资料</div>
+        <div class="logout-btn" onclick="doLogout()">🚪 安全退出</div>
+    </div>
+
+    <!-- 右侧内容区域 -->
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px; font-weight: 300;">控制面板 <span style="color: #444;">/</span> <span id="welcomeName" style="color: #00d4ff; font-weight: bold;">加载中...</span></h2>
+        
+        <!-- 面板 1：个人中心与密码修改 -->
+        <div id="tab-profile" class="tab-content active">
+            <div class="card">
+                <h3>资料绑定与修改</h3>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>关联学号</label>
+                        <input type="text" id="studentId" placeholder="请输入您的学号">
+                    </div>
+                    <div class="form-group">
+                        <label>联系手机</label>
+                        <input type="tel" id="phone" placeholder="请输入11位手机号">
+                    </div>
+                    <div class="form-group">
+                        <label>内部邮箱</label>
+                        <input type="email" id="email" placeholder="请输入常用邮箱">
+                    </div>
+                    <button type="submit" class="btn" id="saveBtn">保存信息修改</button>
+                </form>
+            </div>
+
+            <div class="card" style="border-color: rgba(255, 184, 108, 0.4);">
+                <h3 style="color: #ffb86c; border-bottom-color: rgba(255, 184, 108, 0.2);">账户安全 (修改密码)</h3>
+                <form id="pwdForm">
+                    <div class="form-group"><input type="password" id="oldPwd" placeholder="请输入原密码" required></div>
+                    <div class="form-group"><input type="password" id="newPwd" placeholder="请输入新密码" required></div>
+                    <div class="form-group"><input type="password" id="confirmPwd" placeholder="请确认新密码" required></div>
+                    <button type="submit" class="btn btn-outline" id="pwdBtn" style="border-color: #ffb86c; color: #ffb86c;">确认修改密码</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 面板 2：万能云打印 -->
+        <div id="tab-print" class="tab-content">
+            <div class="card" style="border-color: rgba(0, 255, 136, 0.4);">
+                <h3 style="color: #00ff88; border-bottom-color: rgba(0, 255, 136, 0.2);">远程万能云打印</h3>
+                <p style="color: #a0aec0; font-size: 14px; margin-bottom: 20px;">请确保实验室打印机处于开机状态。支持 PDF、Word 及各种图片格式。</p>
+                <form id="printForm">
+                    <div class="form-group">
+                        <label>请选择文件</label>
+                        <input type="file" id="printFile" accept=".pdf,.doc,.docx,image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>排版模式</label>
+                        <select id="printMode">
+                            <option value="single">单面打印</option>
+                            <option value="duplex">双面打印 (推荐/节约纸张)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" id="printSubmitBtn" style="background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0a0e17;">🚀 发送至打印机</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="tab-orders" class="tab-content">
+            <div class="card" style="max-width: 1000px;">
+                <h3>付费打印订单管理</h3>
+                <div class="orders-toolbar">
+                    <select id="orderStatusFilter">
+                        <option value="">全部订单</option>
+                        <option value="paid_submitted">待确认付款</option>
+                        <option value="pending_payment">待付款</option>
+                        <option value="printing">打印中</option>
+                        <option value="printed">已打印</option>
+                        <option value="failed">失败</option>
+                        <option value="cancelled">已取消</option>
+                    </select>
+                    <button class="btn btn-outline" style="width: auto;" onclick="loadPrintOrders()">刷新订单</button>
+                </div>
+                <div id="ordersList" class="orders-list">
+                    <div class="empty-state">切换到本页后会自动加载最近订单。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 面板 3：机密资料库 -->
+        <div id="tab-secret" class="tab-content">
+            <div class="card">
+                <h3>内部机密资源索引</h3>
+                <div id="secretLinksArea">
+                    <p style="color: #a0aec0;">加载数据中，请稍候...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>文件安全下载</h3>
+                <p style="color: #a0aec0; font-size: 14px; margin-bottom: 20px;">系统已验证您的核心成员身份，以下文件可进行离线下载。</p>
+                <!-- 这里你可以随时添加你需要让大家下载的文件名 -->
+                <button onclick="downloadSecretFile('f103标准例程-V3.5库函数版本.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《f103标准例程-V3.5库函数版本》</button>
+                <button onclick="downloadSecretFile('FlyMcu.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《FlyMcu》</button>
+                <button onclick="downloadSecretFile('K230资料.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《K230资料》</button>
+                <button onclick="downloadSecretFile('STM32F103C8T6中文数据手册.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《STM32F103C8T6中文数据手册》</button>
+                <button onclick="downloadSecretFile('STM32F407VET6工程模板.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《STM32F407VET6工程模板》</button>
+                <button onclick="downloadSecretFile('STM32F407ZGT6工程模板.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《STM32F407ZGT6工程模板》</button>
+                <button onclick="downloadSecretFile('STM32和ROS串口通信分享.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《STM32和ROS串口通信分享》</button>
+                <button onclick="downloadSecretFile('TI德州仪器M0资料.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《TI德州仪器M0资料》</button>
+                <button onclick="downloadSecretFile('张大头_V5.0闭环步进资料.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《张大头_V5.0闭环步进资料》</button>
+                <button onclick="downloadSecretFile('STC-ISP-v6.96.exe')" class="btn btn-outline" style="margin-bottom: 15px;">下载《STC-ISP-v6.96.exe》</button>
+                <button onclick="downloadSecretFile('二维云台.zip')" class="btn btn-outline" style="margin-bottom: 15px;">下载《二维云台》</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 逻辑控制脚本 -->
+    <script>
+        // ======= 注意：如果你的内网穿透没开，请暂时改回 127.0.0.1 =======
+        const API_BASE_URL = "https://api.airbot.top/api"; 
+        
+        // 1. 拦截未登录人员
+        const rawUser = localStorage.getItem("lab_currentUser");
+        if (!rawUser) window.location.href = "index.html"; 
+        const currentUser = JSON.parse(rawUser);
+        document.getElementById("welcomeName").textContent = currentUser.username;
+
+        // 2. 选项卡切换功能
+        function switchTab(tabId, el) {
+            // 改颜色
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+            // 切面板
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            // 如果切到机密区，自动加载网址数据
+            if(tabId === 'secret') loadSecretLinks();
+            if(tabId === 'orders') loadPrintOrders();
+        }
+
+        // 3. 通用提示框函数
+        function showToast(msg, bg, color) {
+            const toast = document.createElement("div");
+            toast.className = "notification notif-show";
+            toast.style.background = bg; toast.style.color = color; toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.classList.remove("notif-show"); setTimeout(() => toast.remove(), 300); }, 2500);
+        }
+
+        // 4. 退出登录
+        function doLogout() {
+            localStorage.removeItem("lab_currentUser");
+            window.location.href = "index.html";
+        }
+
+        // ================= 面板 1 逻辑：个人信息与密码 =================
+        async function loadProfile() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/profile`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                if (response.ok) {
+                    const res = await response.json();
+                    document.getElementById("studentId").value = res.data.student_id || "";
+                    document.getElementById("phone").value = res.data.phone || "";
+                    document.getElementById("email").value = res.data.email || "";
+                } else if (response.status === 401) doLogout(); 
+            } catch (e) { console.error("加载信息失败", e); }
+        }
+        loadProfile();
+
+        document.getElementById("profileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("saveBtn"); btn.textContent = "保存中...";
+            const payload = {
+                student_id: document.getElementById("studentId").value,
+                phone: document.getElementById("phone").value,
+                email: document.getElementById("email").value
+            };
+            try {
+                const res = await fetch(`${API_BASE_URL}/user/profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) showToast("个人信息保存成功！", "#00ff88", "#0a0e17");
+                else showToast("保存失败", "#ff4d4f", "white");
+            } catch (e) { showToast("网络错误", "#ff4d4f", "white"); } 
+            finally { btn.textContent = "保存信息修改"; }
+        });
+
+        document.getElementById("pwdForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const oldP = document.getElementById("oldPwd").value;
+            const newP = document.getElementById("newPwd").value;
+            const conP = document.getElementById("confirmPwd").value;
+            if (newP !== conP) { showToast("两次新密码不一致！", "#ff4d4f", "white"); return; }
+            
+            const btn = document.getElementById("pwdBtn"); btn.textContent = "修改中...";
+            try {
+                const res = await fetch(`${API_BASE_URL}/change-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentUser.token}` },
+                    body: JSON.stringify({ old_password: oldP, new_password: newP })
+                });
+                if (res.ok) { showToast("密码修改成功，请重新登录", "#00ff88", "#0a0e17"); setTimeout(doLogout, 1500); }
+                else { const data = await res.json(); showToast(data.detail || "修改失败", "#ff4d4f", "white"); }
+            } catch (e) { showToast("网络错误", "#ff4d4f", "white"); } 
+            finally { btn.textContent = "确认修改密码"; }
+        });
+
+        // ================= 面板 2 逻辑：云打印 =================
+        document.getElementById("printForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('printFile');
+            const mode = document.getElementById('printMode').value;
+            if (fileInput.files.length === 0) return;
+            if (fileInput.files[0].size > 20 * 1024 * 1024) { showToast("文件不能超过20MB", "#ff4d4f", "white"); return; }
+
+            const btn = document.getElementById("printSubmitBtn"); btn.textContent = "文档解析与传输中..."; btn.disabled = true;
+            const fd = new FormData(); fd.append("file", fileInput.files[0]); fd.append("print_mode", mode);
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/print`, {
+                    method: 'POST', headers: { 'Authorization': `Bearer ${currentUser.token}` }, body: fd
+                });
+                if (res.ok) { showToast("打印任务已发送！", "#00ff88", "#0a0e17"); e.target.reset(); }
+                else { const data = await res.json(); showToast(data.detail || "打印失败", "#ff4d4f", "white"); }
+            } catch (e) { showToast("连接打印服务器失败", "#ff4d4f", "white"); } 
+            finally { btn.textContent = "🚀 发送至打印机"; btn.disabled = false; }
+        });
+
+        // ================= 面板 3 逻辑：付费打印订单 =================
+        const orderStatusFilter = document.getElementById("orderStatusFilter");
+        if (orderStatusFilter) {
+            orderStatusFilter.addEventListener("change", loadPrintOrders);
+        }
+
+        function orderStatusText(status) {
+            const map = {
+                pending_payment: "待付款",
+                paid_submitted: "待确认付款",
+                printing: "打印中",
+                printed: "已打印",
+                failed: "失败",
+                cancelled: "已取消"
+            };
+            return map[status] || status;
+        }
+
+        function colorModeText(mode) {
+            return mode === "color" ? "彩色" : "黑白";
+        }
+
+        function printModeText(mode) {
+            return mode === "duplex" ? "双面" : "单面";
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function adminOrderHeaders(json = true) {
+            const headers = { 'Authorization': `Bearer ${currentUser.token}` };
+            if (json) headers['Content-Type'] = 'application/json';
+            return headers;
+        }
+
+        async function loadPrintOrders() {
+            const list = document.getElementById("ordersList");
+            const status = document.getElementById("orderStatusFilter").value;
+            list.innerHTML = `<div class="empty-state">正在加载订单...</div>`;
+            try {
+                const query = status ? `?status=${encodeURIComponent(status)}` : "";
+                const res = await fetch(`${API_BASE_URL}/admin/print-orders${query}`, {
+                    headers: adminOrderHeaders(false)
+                });
+                if (!res.ok) {
+                    if (res.status === 401) doLogout();
+                    const data = await res.json();
+                    throw new Error(data.detail || "订单加载失败");
+                }
+                const data = await res.json();
+                if (!data.data.length) {
+                    list.innerHTML = `<div class="empty-state">当前没有符合条件的订单。</div>`;
+                    return;
+                }
+                list.innerHTML = data.data.map(renderOrderCard).join("");
+            } catch (error) {
+                list.innerHTML = `<div class="empty-state">${error.message || "订单加载失败"}</div>`;
+            }
+        }
+
+        function renderOrderCard(order) {
+            const canPrint = order.status === "paid_submitted";
+            const canCancel = !["printing", "printed", "cancelled"].includes(order.status);
+            return `
+                <div class="order-card">
+                    <div class="order-head">
+                        <div>
+                        <div class="order-no">${order.order_no}</div>
+                        <div style="color:#a0aec0;font-size:13px;">${order.created_at || ""}</div>
+                    </div>
+                    <div class="order-status">${orderStatusText(order.status)}</div>
+                </div>
+                <div class="order-grid">
+                        <div>联系人：<strong>${escapeHtml(order.customer_name)} / ${escapeHtml(order.customer_phone)}</strong></div>
+                        <div>文件：<strong>${escapeHtml(order.original_filename)}</strong></div>
+                        <div>页数/份数：<strong>${order.page_count} 页 × ${order.copies} 份</strong></div>
+                        <div>模式：<strong>${colorModeText(order.color_mode)} / ${printModeText(order.print_mode)}</strong></div>
+                        <div>金额：<strong>${Number(order.total_price).toFixed(2)} 元</strong></div>
+                        <div>付款备注：<strong>${escapeHtml(order.payment_note || "无")}</strong></div>
+                        <div>管理员备注：<strong>${escapeHtml(order.admin_note || "无")}</strong></div>
+                        <div>错误信息：<strong>${escapeHtml(order.error_message || "无")}</strong></div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-outline" onclick="downloadOrderFile('${order.order_no}', 'original')">下载原文件</button>
+                        <button class="btn btn-outline" onclick="downloadOrderFile('${order.order_no}', 'pdf')">下载PDF</button>
+                        <button class="btn" ${canPrint ? "" : "disabled"} onclick="confirmPrintOrder('${order.order_no}')">确认付款并打印</button>
+                        <button class="btn btn-outline" ${canCancel ? "" : "disabled"} onclick="cancelPrintOrder('${order.order_no}')">取消订单</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function downloadOrderFile(orderNo, kind) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/print-orders/${orderNo}/download/${kind}`, {
+                    headers: adminOrderHeaders(false)
+                });
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.detail || "下载失败");
+                }
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = kind === "pdf" ? `${orderNo}.pdf` : `${orderNo}-original`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                showToast(error.message || "下载失败", "#ff4d4f", "white");
+            }
+        }
+
+        async function confirmPrintOrder(orderNo) {
+            const note = prompt("确认已收到付款并开始打印？可填写管理员备注：", "") || "";
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/print-orders/${orderNo}/confirm-print`, {
+                    method: "POST",
+                    headers: adminOrderHeaders(true),
+                    body: JSON.stringify({ admin_note: note })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "确认打印失败");
+                showToast("订单已发送打印", "#00ff88", "#0a0e17");
+                loadPrintOrders();
+            } catch (error) {
+                showToast(error.message || "确认打印失败", "#ff4d4f", "white");
+                loadPrintOrders();
+            }
+        }
+
+        async function cancelPrintOrder(orderNo) {
+            const note = prompt("请输入取消原因：", "") || "";
+            if (!confirm("确认取消该订单？")) return;
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/print-orders/${orderNo}/cancel`, {
+                    method: "POST",
+                    headers: adminOrderHeaders(true),
+                    body: JSON.stringify({ admin_note: note })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "取消失败");
+                showToast("订单已取消", "#00ff88", "#0a0e17");
+                loadPrintOrders();
+            } catch (error) {
+                showToast(error.message || "取消失败", "#ff4d4f", "white");
+            }
+        }
+
+        // ================= 面板 3 逻辑：机密资料 =================
+        async function loadSecretLinks() {
+            const area = document.getElementById("secretLinksArea");
+            try {
+                const res = await fetch(`${API_BASE_URL}/secret-links`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    let html = `<ul style="list-style: none; padding: 0; line-height: 2;">`;
+                    data.data.forEach(link => {
+                        html += `<li>🔗 <a href="${link.url}" target="_blank" style="color: #a0aec0; text-decoration: none;" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='#a0aec0'">${link.name}</a></li>`;
+                    });
+                    html += `</ul>`;
+                    area.innerHTML = html;
+                }
+            } catch (e) { area.innerHTML = "<p style='color: #ff4d4f;'>数据加载失败</p>"; }
+        }
+
+        async function downloadSecretFile(filename) {
+            showToast("正在请求机密文件...", "#00d4ff", "#0a0e17");
+            try {
+                const res = await fetch(`${API_BASE_URL}/download/${filename}`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+                if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url; a.download = filename;
+                    document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+                    showToast("下载成功！", "#00ff88", "#0a0e17");
+                } else { const data = await res.json(); showToast(data.detail || "文件不存在或无权限", "#ff4d4f", "white"); }
+            } catch (e) { showToast("下载请求失败", "#ff4d4f", "white"); }
+        }
+    </script>
+</body>
+</html>
