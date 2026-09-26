@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f3ef" />
+    <meta name="description" content="南京工程学院空中机器人实验室，聚焦自主导航、机器视觉、智能控制与多机协同。" />
+    <title>空中机器人实验室 | AIRBOT Lab</title>
+    <link rel="stylesheet" href="style.css?v=5.3" />
+</head>
+<body>
+    <div class="cursor-orbit" aria-hidden="true"><span></span></div>
+    <nav class="navbar" aria-label="主导航"><div class="navbar-content">
+        <a class="logo" href="#home" aria-label="AIRBOT 首页"><span class="logo-mark"><img src="picture/logo.png" alt="" /></span><span class="logo-copy"><strong>NJIT / AIRBOT</strong><small>AERIAL ROBOTICS LAB</small></span></a>
+        <div class="nav-links"><a href="#home">首页</a><a href="#products">项目</a><a href="#research">研究</a><a href="#awards">荣誉</a><a href="#about">实验室</a><a href="#join">加入我们</a><a href="#contact">联系</a></div>
+        <button class="login-btn magnetic" id="loginBtn" type="button">内部登录</button><button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="打开菜单"><i></i><i></i></button>
+    </div></nav>
+    <div class="mobile-menu" id="mobileMenu"><a href="#home">首页</a><a href="#products">项目中心</a><a href="#research">研究方向</a><a href="#awards">荣誉资质</a><a href="#about">关于我们</a><a href="#join">加入我们</a><a href="#contact">联系我们</a><button class="mobile-login-btn" type="button">内部登录</button></div>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-grid" aria-hidden="true"></div>
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="eyebrow"><span class="status-dot"></span>NJIT · AERIAL ROBOTICS LAB · 2014—2026</div>
+                    <h1><span>让机器</span><br />理解空间<span class="title-mark">。</span></h1>
+                    <p class="hero-subtitle">从感知、决策到行动，我们构建真正走出实验室的自主机器人系统。</p>
+                    <div class="hero-actions"><button class="btn-primary magnetic" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">探索项目 <span>↗</span></button><a class="text-link" href="#about">认识 AIRBOT <span>↓</span></a></div>
+                    <div class="hero-meta"><div><small>FOCUS / 01</small><strong>Aerial robotics</strong></div><div><small>FOCUS / 02</small><strong>Autonomous systems</strong></div><div><small>LOCATION</small><strong>Nanjing, CN</strong></div></div>
+                </div>
+                <div class="hero-visual" data-tilt>
+                    <div class="visual-frame"><img class="hero-photo" src="picture/generated/airbot-wind-tunnel.webp" alt="自主无人机在航空风洞中进行飞行测试" /><div class="frame-index">SYS / AIR—04</div><div class="telemetry"><span>ALT 021.4 M</span><span>SPD 08.6 M/S</span><span>LINK 98%</span></div></div>
+                    <div class="floating-note note-a">VISION LOCKED <b>●</b></div><div class="floating-note note-b">FLIGHT READY / 04</div>
+                </div>
+            </div>
+            <a class="hero-scroll" href="#products"><span>SCROLL TO DISCOVER</span><i></i></a>
+        </section>
+
+        <section id="products" class="products section-shell">
+            <div class="section-heading"><div><span class="section-no">01</span><p class="kicker">SELECTED PROJECTS</p></div><h2>把前沿技术，<br />变成可运行的系统。</h2><p class="section-intro">不止验证概念。我们围绕真实场景完成硬件、算法与系统工程的闭环。</p></div>
+            <div class="products-grid">
+                <article class="product-card" data-tilt><div class="product-image"><img src="picture/1.jpg" alt="AR-4X 四旋翼无人机" /><span class="image-tag">FLIGHT / 01</span></div><div class="product-info"><span class="card-index">01—03</span><h3>AR-4X 四旋翼无人机</h3><p>高性能自主导航无人机，搭载先进视觉系统</p><div class="product-specs"><span>35 MIN</span><span>80 KM/H</span></div><button class="product-btn">查看项目 <span>↗</span></button></div></article>
+                <article class="product-card" data-tilt><div class="product-image"><img src="picture/2.jpg" alt="WR-200 轮式机器人" /><span class="image-tag">GROUND / 02</span></div><div class="product-info"><span class="card-index">02—03</span><h3>WR-200 轮式机器人</h3><p>面向复杂环境的智能巡检与移动作业平台</p><div class="product-specs"><span>8 HRS</span><span>50 KG</span></div><button class="product-btn">查看项目 <span>↗</span></button></div></article>
+                <article class="product-card" data-tilt><div class="product-image"><img src="picture/3.jpg" alt="MR-6X 六旋翼系统" /><span class="image-tag">HEAVY / 03</span></div><div class="product-info"><span class="card-index">03—03</span><h3>MR-6X 六旋翼系统</h3><p>为物流运输与特种任务设计的重载飞行平台</p><div class="product-specs"><span>20 KG</span><span>25 MIN</span></div><button class="product-btn">查看项目 <span>↗</span></button></div></article>
+            </div>
+        </section>
+
+        <section id="research" class="research"><div class="section-shell">
+            <div class="section-heading light"><div><span class="section-no">02</span><p class="kicker">RESEARCH MATRIX</p></div><h2>面向自主系统的<br />六项核心能力。</h2><p class="section-intro">软硬件协同研发，让机器人在复杂、动态、未知环境中稳定工作。</p></div>
+            <div class="research-grid">
+                <article class="research-card"><span class="research-code">NAV / 01</span><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16"/><path d="m24 11 5 13-5 13-5-13z"/></svg><h3>自主导航</h3><p>视觉 SLAM、路径规划与动态避障，实现复杂环境中的精准定位。</p><a href="#contact">Learn more ↗</a></article>
+                <article class="research-card"><span class="research-code">VIS / 02</span><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M5 24s7-12 19-12 19 12 19 12-7 12-19 12S5 24 5 24Z"/><circle cx="24" cy="24" r="5"/></svg><h3>机器视觉</h3><p>目标检测、三维感知与场景理解，构建可靠的环境认知能力。</p><a href="#contact">Learn more ↗</a></article>
+                <article class="research-card"><span class="research-code">CTL / 03</span><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M7 32 18 21l8 7 15-16"/><path d="M33 12h8v8"/></svg><h3>智能控制</h3><p>非线性控制与运动规划，提升机器人在极限工况下的稳定性。</p><a href="#contact">Learn more ↗</a></article>
+                <article class="research-card"><span class="research-code">SWM / 04</span><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="12" cy="24" r="4"/><circle cx="36" cy="12" r="4"/><circle cx="36" cy="36" r="4"/><path d="m16 22 16-8M16 26l16 8"/></svg><h3>多机协同</h3><p>分布式决策与任务分配，让多机器人系统高效协同作业。</p><a href="#contact">Learn more ↗</a></article>
+                <article class="research-card"><span class="research-code">PWR / 05</span><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M27 5 12 27h11l-2 16 15-23H25z"/></svg><h3>能源系统</h3><p>动力系统建模与能源管理，持续拓展自主平台的任务边界。</p><a href="#contact">Learn more ↗</a></article>
+                <article class="research-card"><span class="research-code">COM / 06</span><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M18 32a9 9 0 0 1 12 0M12 26a17 17 0 0 1 24 0M6 20a25 25 0 0 1 36 0"/><circle cx="24" cy="38" r="2"/></svg><h3>通信技术</h3><p>低时延无线通信与链路冗余，保障任务数据持续可靠传输。</p><a href="#contact">Learn more ↗</a></article>
+            </div>
+        </div></section>
+
+        <section class="tech-atlas section-shell" aria-labelledby="atlas-title">
+            <div class="section-heading"><div><span class="section-no">03</span><p class="kicker">TECHNOLOGY ATLAS</p></div><h2 id="atlas-title">看见机器人<br />如何感知与行动。</h2><p class="section-intro">从硬件构成到环境建模，再到多机协同，用可视化方式拆解自主系统背后的工作原理。</p></div>
+            <div class="atlas-grid">
+                <article class="atlas-card atlas-perception" data-tilt><div class="atlas-image"><img src="picture/generated/robot-perception.webp" alt="机器人从多传感器感知到建图和路径规划的原理图" loading="lazy" /></div><div class="atlas-copy"><span>PERCEPTION / 01</span><h3>机器人如何理解周围世界？</h3><p>相机、激光雷达与惯性传感器持续采集环境信息；算法将它们融合为三维地图，并实时规划安全轨迹。</p><button class="atlas-toggle" type="button">展开原理 <i>＋</i></button></div></article>
+                <article class="atlas-card atlas-anatomy" data-tilt><div class="atlas-image"><img src="picture/generated/drone-anatomy.webp" alt="四旋翼无人机各个核心部件的爆炸结构图" loading="lazy" /></div><div class="atlas-copy"><span>ANATOMY / 02</span><h3>一台自主无人机的内部构成</h3><p>动力、能源、感知与计算模块通过飞控系统协同，形成从输入到执行的完整闭环。</p><button class="atlas-toggle" type="button">展开部件 <i>＋</i></button></div></article>
+                <article class="atlas-card atlas-future" data-tilt><div class="atlas-image"><img src="picture/generated/future-swarm.webp" alt="空中与地面机器人协同服务未来城市的概念场景" loading="lazy" /></div><div class="atlas-copy"><span>OUTLOOK / 03</span><h3>未来，不只是一台机器</h3><p>空中与地面机器人将共享地图、任务与决策，成为城市巡检、应急响应和环境研究的新型基础设施。</p><button class="atlas-toggle" type="button">未来图景 <i>↗</i></button></div></article>
+            </div>
+        </section>
+
+        <section class="features" aria-label="实验室数据"><div class="features-content"><div class="feature-lead"><span>LAB / IN NUMBERS</span><p>用长期投入，换取每一次可靠起飞。</p></div><div class="feature-item"><div class="feature-number">12+</div><div class="feature-label">年持续研发</div></div><div class="feature-item"><div class="feature-number">50+</div><div class="feature-label">研发成员</div></div><div class="feature-item"><div class="feature-number">20+</div><div class="feature-label">专利技术</div></div><div class="feature-item"><div class="feature-number">30+</div><div class="feature-label">竞赛奖项</div></div></div></section>
+
+        <section id="awards" class="awards section-shell"><div class="section-heading compact"><div><span class="section-no">04</span><p class="kicker">RECOGNITION</p></div><h2>荣誉是过程的刻度，<br />不是创新的终点。</h2></div><div class="awards-timeline">
+            <article class="award-item"><div class="award-year">2025 <small>01</small></div><div class="award-content"><div><span>NATIONAL / FIRST PRIZE</span><h3>全国大学生机器人竞赛一等奖</h3><p>智能巡检无人机系统</p></div><img src="rcom1.jpg" alt="全国大学生机器人竞赛获奖证书" /></div></article>
+            <article class="award-item"><div class="award-year">2025 <small>02</small></div><div class="award-content"><div><span>NATIONAL / FIRST PRIZE</span><h3>全国大学生机器人竞赛一等奖</h3><p>智能侦察机器人系统</p></div><img src="rcom2.jpg" alt="智能侦察机器人比赛现场" /></div></article>
+            <article class="award-item"><div class="award-year">2024 <small>03</small></div><div class="award-content"><div><span>JIANGSU / GOLD AWARD</span><h3>江苏省大学生科技创新大赛金奖</h3><p>自主导航无人机平台</p></div><span class="award-arrow">↗</span></div></article>
+        </div></section>
+
+        <section id="about" class="about"><div class="about-content"><div class="about-image" data-tilt><img src="picture/4.jpg" alt="AIRBOT 实验室研发现场" /><span>BUILD / TEST / ITERATE</span></div><div class="about-text"><div class="section-no">05</div><p class="kicker">ABOUT THE LAB</p><h2>我们相信，真正的创新发生在反复验证里。</h2><p class="lead">空中机器人实验室成立于 2014 年，隶属于南京工程学院创新创业学院。</p><p>我们聚焦四旋翼机器人和轮式机器人核心技术，从机械结构、嵌入式系统到感知与控制算法，完成跨学科的系统研发，并让学生在真实项目里成长。</p><div class="about-stats"><div class="stat"><span class="stat-value">2014</span><span class="stat-label">成立年份</span></div><div class="stat"><span class="stat-value">2K+</span><span class="stat-label">飞行小时</span></div><div class="stat"><span class="stat-value">100+</span><span class="stat-label">研究项目</span></div></div></div></div></section>
+        <section id="members" class="members-section"><div class="section-shell"><div class="section-heading compact"><div><span class="section-no">06</span><p class="kicker">THE PEOPLE</p></div><h2>由好奇心驱动的<br />工程实践者。</h2></div><div class="members-grid features-content"></div></div></section>
+
+        <section id="join" class="join-section section-shell" aria-labelledby="join-title">
+            <div class="join-copy">
+                <div class="section-heading-label"><span class="section-no">07</span><span class="kicker">JOIN AIRBOT</span></div>
+                <h2 id="join-title">一起把想法<br />做成会飞的现实。</h2>
+                <p class="join-lead">如果你对机器人、嵌入式开发、机器视觉或自主导航感兴趣，欢迎来到空中机器人实验室交流。</p>
+                <div class="join-steps"><div><span>01 / 了解方向</span><p>从飞行平台、轮式机器人到算法与系统集成，找到自己感兴趣的项目。</p></div><div><span>02 / 加入交流</span><p>扫描右侧二维码进入招新交流群，了解项目展示、活动和后续安排。</p></div><div><span>03 / 保持联系</span><p>如二维码失效，可通过邮件联系实验室：<a href="mailto:2819136493@qq.com">2819136493@qq.com</a></p></div></div>
+            </div>
+            <div class="join-qr-panel"><div class="join-qr-heading"><span>RECRUITMENT / GROUP</span><span>SCAN TO JOIN ↗</span></div><a class="join-qr-link" href="picture/QR.jpg" target="_blank" rel="noopener" aria-label="打开招新二维码大图"><img src="picture/QR.jpg" alt="空中机器人实验室招新交流群二维码，点击可查看大图" loading="lazy" /></a><p>扫码进入招新交流群 <span>·</span> 点击图片可放大查看</p><small>群内信息及招新时间请以最新通知为准。</small></div>
+        </section>
+
+        <section id="contact" class="contact"><div class="contact-content"><div class="contact-info"><p class="kicker">START A CONVERSATION</p><h2>有一个值得实现的想法？<br /><em>和我们聊聊。</em></h2><p class="contact-lead">项目合作、技术交流或加入实验室，欢迎留下你的信息。</p><div class="contact-list"><div class="contact-item"><span>01 / ADD</span><p>南京市江宁科学园弘景大道 1 号<br />创新创业学院 · A104</p></div><div class="contact-item"><span>02 / TEL</span><p>025—86118000</p></div><div class="contact-item"><span>03 / MAIL</span><p>2819136493@qq.com</p></div><div class="contact-item"><span>04 / TIME</span><p>MON—FRI · 08:00—21:00</p></div></div></div><div class="contact-form"><div class="form-head"><span>MESSAGE FORM</span><b>04 FIELDS</b></div><form id="contactForm"><label><span>你的姓名</span><input type="text" placeholder="Name" name="name" required /></label><label><span>电子邮箱</span><input type="email" placeholder="Email address" name="email" required /></label><label><span>联系电话</span><input type="tel" placeholder="Phone / optional" name="phone" /></label><label><span>留言内容</span><textarea placeholder="Tell us about your idea..." name="message" rows="4" required></textarea></label><button type="submit" class="submit-btn magnetic">发送留言 <span>↗</span></button></form></div></div></section>
+    </main>
+
+    <footer class="footer"><div class="footer-top"><a class="logo inverse" href="#home"><span class="logo-mark"><img src="picture/logo.png" alt="" /></span><span class="logo-copy"><strong>NJIT / AIRBOT</strong><small>AERIAL ROBOTICS LAB</small></span></a><p>探索无人系统的下一种可能。</p><a class="back-top" href="#home">BACK TO TOP ↑</a></div><div class="footer-content"><div class="footer-section"><h4>NAVIGATION</h4><ul><li><a href="#products">项目中心</a></li><li><a href="#research">研究方向</a></li><li><a href="#awards">荣誉资质</a></li><li><a href="#about">关于我们</a></li><li><a href="#join">加入我们</a></li></ul></div><div class="footer-section"><h4>RESOURCES</h4><ul><li><a href="javascript:void(0)" onclick="showNotification('技术文档正在整理中，将在后续开放','info')">技术文档</a></li><li><a href="print.html">自助打印</a></li><li><a href="javascript:void(0)" onclick="showNotification('学习资源更新中，敬请期待','info')">学习资源</a></li><li><a href="javascript:void(0)" onclick="showNotification('下载中心暂未开放，机密文件请走内部登录','info')">下载中心</a></li></ul></div><div class="footer-section"><h4>SOCIAL</h4><div class="social-links"><a href="#join">招新交流群 ↗</a><a href="https://github.com/gigityim" target="_blank" rel="noopener">GitHub ↗</a><a href="javascript:void(0)" onclick="showNotification('B站官方视频筹备中，敬请期待！','info')">Bilibili ↗</a></div></div></div><div class="footer-bottom"><p>© 2026 南京工程学院空中机器人实验室</p><p>DESIGNED FOR THE NEXT FLIGHT</p></div></footer>
+    <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><div class="modal-content"><div class="modal-kicker">MEMBER ACCESS / AUTH—01</div><button class="modal-close" id="modalClose" type="button" aria-label="关闭">×</button><h2 id="loginTitle">内部登录</h2><p>进入 AIRBOT 实验室内部控制台</p><form id="loginForm"><div class="form-group"><label for="username">用户名</label><input type="text" id="username" name="username" placeholder="Username" autocomplete="username" required /></div><div class="form-group"><label for="password">密码</label><input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" required /></div><div class="error-message" id="loginError" hidden>用户名或密码错误</div><button type="submit" class="submit-btn">验证并进入 <span>↗</span></button></form></div></div>
+    <button class="scroll-to-top" id="scrollToTop" type="button" aria-label="返回顶部">↑</button><script src="script.js?v=5.0"></script>
+</body>
+</html>
