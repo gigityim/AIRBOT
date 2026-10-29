@@ -238,6 +238,26 @@
                             <option value="duplex">双面打印 (推荐/节约纸张)</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>颜色模式</label>
+                        <select id="printColor">
+                            <option value="black_white">黑白打印</option>
+                            <option value="color">彩色打印</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>打印份数</label>
+                        <input type="number" id="printCopies" min="1" max="99" step="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>起始页（留空 = 从第 1 页开始）</label>
+                        <input type="number" id="printPageFrom" min="1" step="1" placeholder="例如 2">
+                    </div>
+                    <div class="form-group">
+                        <label>结束页（留空 = 到最后一页）</label>
+                        <input type="number" id="printPageTo" min="1" step="1" placeholder="例如 5">
+                    </div>
+                    <p style="color: #a0aec0; font-size: 13px;">上传后原文件会同步备份到服务器代码目录下的 print_uploads 文件夹。</p>
                     <button type="submit" class="btn" id="printSubmitBtn" style="background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0a0e17;">🚀 发送至打印机</button>
                 </form>
             </div>
@@ -391,17 +411,24 @@
             e.preventDefault();
             const fileInput = document.getElementById('printFile');
             const mode = document.getElementById('printMode').value;
+            const color = document.getElementById('printColor').value;
+            const copies = Math.max(1, Math.min(99, parseInt(document.getElementById('printCopies').value, 10) || 1));
+            const pageFrom = document.getElementById('printPageFrom').value;
+            const pageTo = document.getElementById('printPageTo').value;
             if (fileInput.files.length === 0) return;
-            if (fileInput.files[0].size > 20 * 1024 * 1024) { showToast("文件不能超过20MB", "#ff4d4f", "white"); return; }
+            if (fileInput.files[0].size > 100 * 1024 * 1024) { showToast("文件不能超过100MB", "#ff4d4f", "white"); return; }
+            if (pageFrom && pageTo && parseInt(pageFrom, 10) > parseInt(pageTo, 10)) { showToast("起始页不能大于结束页", "#ff4d4f", "white"); return; }
 
             const btn = document.getElementById("printSubmitBtn"); btn.textContent = "文档解析与传输中..."; btn.disabled = true;
-            const fd = new FormData(); fd.append("file", fileInput.files[0]); fd.append("print_mode", mode);
+            const fd = new FormData(); fd.append("file", fileInput.files[0]); fd.append("print_mode", mode); fd.append("color_mode", color); fd.append("copies", copies);
+            if (pageFrom) fd.append("page_from", pageFrom);
+            if (pageTo) fd.append("page_to", pageTo);
 
             try {
                 const res = await fetch(`${API_BASE_URL}/print`, {
                     method: 'POST', headers: { 'Authorization': `Bearer ${currentUser.token}` }, body: fd
                 });
-                if (res.ok) { showToast("打印任务已发送！", "#00ff88", "#0a0e17"); e.target.reset(); }
+                if (res.ok) { const data = await res.json().catch(() => ({})); const d = data.data || {}; const detail = d.total_pages ? `（共 ${d.total_pages} 页，第 ${d.page_from}-${d.page_to} 页，${d.copies} 份）` : ""; showToast(`打印任务已发送！${detail}`, "#00ff88", "#0a0e17"); e.target.reset(); }
                 else { const data = await res.json(); showToast(data.detail || "打印失败", "#ff4d4f", "white"); }
             } catch (e) { showToast("连接打印服务器失败", "#ff4d4f", "white"); } 
             finally { btn.textContent = "🚀 发送至打印机"; btn.disabled = false; }
